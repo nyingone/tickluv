@@ -18,11 +18,13 @@ class Visitor
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Assert\NotBlank
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Assert\NotBlank
      */
     private $lastName;
 
@@ -33,6 +35,7 @@ class Visitor
 
     /**
      * @ORM\Column(type="string", length=2)
+     *  @Assert\NotBlank
      */
     private $country;
 
