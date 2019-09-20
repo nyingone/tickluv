@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -49,7 +51,7 @@ class BookingOrder
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $validatedOn;
+    private $validatedAt;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -71,15 +73,27 @@ class BookingOrder
      */
     private $paymentExtRef;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $datetime;
-
+    
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $cancelledOn;
+    private $cancelledAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="bookings")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $customer;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Visitor", mappedBy="bookingOrder", orphanRemoval=true)
+     */
+    private $visitors;
+
+    public function __construct()
+    {
+        $this->visitors = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -158,14 +172,14 @@ class BookingOrder
         return $this;
     }
 
-    public function getValidatedOn(): ?\DateTimeInterface
+    public function getValidatedAt(): ?\DateTimeInterface
     {
-        return $this->validatedOn;
+        return $this->validatedAt;
     }
 
-    public function setValidatedOn(?\DateTimeInterface $validatedOn): self
+    public function setValidatedAt(?\DateTimeInterface $validatedAt): self
     {
-        $this->validatedOn = $validatedOn;
+        $this->validatedAt = $validatedAt;
 
         return $this;
     }
@@ -218,26 +232,58 @@ class BookingOrder
         return $this;
     }
 
-    public function getDatetime(): ?string
+    
+    public function getCancelledAt(): ?\DateTimeInterface
     {
-        return $this->datetime;
+        return $this->cancelledAt;
     }
 
-    public function setDatetime(string $datetime): self
+    public function setCancelledAt(?\DateTimeInterface $cancelledAt): self
     {
-        $this->datetime = $datetime;
+        $this->cancelledAt = $cancelledAt;
 
         return $this;
     }
 
-    public function getCancelledOn(): ?\DateTimeInterface
+    public function getCustomer(): ?Customer
     {
-        return $this->cancelledOn;
+        return $this->customer;
     }
 
-    public function setCancelledOn(?\DateTimeInterface $cancelledOn): self
+    public function setCustomer(?Customer $customer): self
     {
-        $this->cancelledOn = $cancelledOn;
+        $this->customer = $customer;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Visitor[]
+     */
+    public function getVisitors(): Collection
+    {
+        return $this->visitors;
+    }
+
+    public function addVisitor(Visitor $visitor): self
+    {
+        if (!$this->visitors->contains($visitor)) {
+            $this->visitors[] = $visitor;
+            $visitor->setBookingOrder($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisitor(Visitor $visitor): self
+    {
+        if ($this->visitors->contains($visitor)) {
+            $this->visitors->removeElement($visitor);
+            // set the owning side to null (unless already changed)
+            if ($visitor->getBookingOrder() === $this) {
+                $visitor->setBookingOrder(null);
+            }
+        }
 
         return $this;
     }
