@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BookingOrderController extends AbstractController
 {
     /**
-     * @Route("/booking/order", name="booking_order")
+     * @Route("/booking/order", name="booking")
      */
     public function new(Request $request)
     {

@@ -92,7 +92,7 @@ class BookingOrder
     private $customer;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Visitor", mappedBy="bookingOrder", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Visitor", mappedBy="bookingOrder", orphanRemoval=true, cascade={"persist"})
      */
     private $visitors;
 

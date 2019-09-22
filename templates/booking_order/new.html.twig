@@ -12,6 +12,8 @@
     <h1>Hello {{ 'test' }}! ✅</h1>
     {{ form_start(form) }}
         {# Render the BookingOrder fields to enter #}
+        {% include '@Calendar/calendar.html' %}
+        
         <ul>
             <li>
                 {{ form_row(form.expectedDate)}}

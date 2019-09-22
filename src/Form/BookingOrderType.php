@@ -23,7 +23,9 @@ class BookingOrderType extends AbstractType
         $builder->add('visitors', CollectionType::class, [
             'entry_type' => VisitorType::class,
             'entry_options' => ['label' => false],
+            'by_reference' => false,
             'allow_add' => true,
+            'allow_delete' => true,
         ]);
     }
 

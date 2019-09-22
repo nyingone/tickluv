@@ -18,11 +18,6 @@ class VisitorType extends AbstractType
             ->add('country')
             ->add('discounted')
             ->add('cost')
-            ->add('createdAt')
-            ->add('confirmedAt')
-            ->add('ticketRef')
-            ->add('cancelled')
-            ->add('bookingOrder')
         ;
     }
 
