@@ -7,47 +7,78 @@
     .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
+<script>
+
+</script>
 
 <div class="example-wrapper">
-    <h1>Hello {{ 'test' }}! ✅</h1>
-    {{ form_start(form) }}
-        {# Render the BookingOrder fields to enter #}
-        {% include '@Calendar/calendar.html' %}
-        
-        <ul>
-            <li>
-                {{ form_row(form.expectedDate)}}
-            </li>
-            <li>
-                {{ form_row(form.partTimeCode)}}
-            </li>
-            <li>
-                {{ form_row(form.ticketCount)}}
-            </li>
-            <li>
-                {{ form_row(form.customer)}}
-            </li>
-        </ul>
+   
 
-         
-        <h3>Vos visiteurs</h3>     
-        <ul class="visitors" data-prototype="{{ form_widget(form.visitors.vars.prototype)|e('html_attr') }}>
-          {# iterate over each existing Visitor and render fields to enter #}
-            {% for visitor in form.visitors %}
+    {{ form_start(form) }}
+    {# Render the BookingOrder fields #}
+    
+  
+            <div class="panel-group">
+                <ul>
+                    <div  class="col-sm-6">
+                        <div class = "row">
+                            <li>
+                                {{ form_row(form.expectedDate)}}
+                            </li>
+                            <li>
+                                {{ form_row(form.partTimeCode)}}
+                            </li>
+                            <li>
+                                {{ form_row(form.ticketCount)}}
+                            </li>
+                         </div>
+                   
+                        <div class = "row">
+                            <li>
+                                {{ form_row(form.customer)}}
+                            </li>
+                        </div>
+                    </div>
+                </ul>
+
+            </div>
+   
+
+        <h3>Your visitors</h3>     
+        <div  class="col-sm-8" id="visitorList" data-prototype="{{ form_widget(form.visitors.vars.prototype)|e('html_attr') }}>
+        {# iterate over each existing Visitor and render fields to enter #}
+        <div class = "row">
+            <div  class="col-sm-6 offset-sm-2">
+            <ul class="guests">
+        
+                {% for visitor in form.visitors %}
                 <li>
-                    {{ form_row(visitor.firstName)}}
+                    <div class= "Panel panel-info">
+                        <div class="panel-heading">
+                    
+                            {{ form_row(visitor.firstName)}}
+                        
+                        
+                            {{ form_row(visitor.lastName)}}
+                    
+                        </div>
+                        <div class="panel-body">
+                    
+                            {{ form_row(visitor.birthDate)}}
+                    
+                            {{ form_row(visitor.country)}}
+                        
+                        </div>
+                        <div class="panel-footer">Panel Footer</div>
+                        </div>     
+                    </div>
                 </li>
-                <li>
-                    {{ form_row(visitor.lastName)}}
-                </li>
-                <li>
-                    {{ form_row(visitor.birthDate)}}
-                </li>
-                <li>
-                    {{ form_row(visitor.country)}}
-                </li>
-            {% endfor %}         
-        </ul>
+                {% endfor %}  
+            </ul>
+            </div>
+        </div>
+         </div>
+    </div>
     {{ form_end(form) }}
 
 </div>

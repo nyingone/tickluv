@@ -18,6 +18,14 @@ class BookingOrderController extends AbstractController
     {
         $BookingOrder = new BookingOrder;
 
+        $visitor1 = new Visitor();
+        $visitor1->setFirstName('Dummy');
+        $visitor1->setLastName('FalseName');
+        $visitor1->setBirthDate(new\datetime);
+        $visitor1->setCountry('FR');
+        //
+      
+
 
         $form = $this->createForm(BookingOrderType::class, $BookingOrder);
 
