@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BookingOrderController!{% endblock %}
+{% block title %}BookingOrderForm!{% endblock %}
 
 {% block body %}
 <style>
@@ -13,72 +13,59 @@
 
 <div class="example-wrapper">
    
-
+ <h1>Hello {{ controller_name }}! ✅</h1>
     {{ form_start(form) }}
     {# Render the BookingOrder fields #}
     
-  
-            <div class="panel-group">
-                <ul>
-                    <div  class="col-sm-6">
-                        <div class = "row">
-                            <li>
-                                {{ form_row(form.expectedDate)}}
-                            </li>
-                            <li>
-                                {{ form_row(form.partTimeCode)}}
-                            </li>
-                            <li>
-                                {{ form_row(form.ticketCount)}}
-                            </li>
-                         </div>
-                   
-                        <div class = "row">
-                            <li>
-                                {{ form_row(form.customer)}}
-                            </li>
-                        </div>
-                    </div>
-                </ul>
-
+    <div class="panel-group">
+        <ul>
+            <div  class="col-md-8">
+                
+                    <li id= "calendar-holder">
+                        {{ form_row(form.expectedDate)}}
+                    </li>
+                    <li>
+                        {{ form_row(form.partTimeCode)}}
+                    </li>
+                    <li>
+                        {{ form_row(form.visitorCount)}}
+                    </li>
+                                    
+                    <li>
+                        {{ form_row(form.customer)}}
+                    </li>
+                
             </div>
-   
+        </ul>
 
-        <h3>Your visitors</h3>     
-        <div  class="col-sm-8" id="visitorList" data-prototype="{{ form_widget(form.visitors.vars.prototype)|e('html_attr') }}>
-        {# iterate over each existing Visitor and render fields to enter #}
-        <div class = "row">
-            <div  class="col-sm-6 offset-sm-2">
-            <ul class="guests">
-        
-                {% for visitor in form.visitors %}
-                <li>
-                    <div class= "Panel panel-info">
-                        <div class="panel-heading">
-                    
-                            {{ form_row(visitor.firstName)}}
-                        
-                        
-                            {{ form_row(visitor.lastName)}}
-                    
-                        </div>
-                        <div class="panel-body">
-                    
-                            {{ form_row(visitor.birthDate)}}
-                    
-                            {{ form_row(visitor.country)}}
-                        
-                        </div>
-                        <div class="panel-footer">Panel Footer</div>
-                        </div>     
-                    </div>
-                </li>
-                {% endfor %}  
-            </ul>
-            </div>
-        </div>
-         </div>
     </div>
+
+
+    <h3>Your visitors</h3>     
+    <div  class="col-md-8 offset-md-2" id="visitorList" data-prototype="{{ form_widget(form.visitors.vars.prototype)|e('html_attr') }}">
+    {# iterate over each existing Visitor and render fields to enter #}
+
+    
+        <div class= "Panel panel-info">
+            <ul class="guests">
+            {% for visitor in form.visitors %}
+                <li>
+                    {{ form_row(visitor.firstName)}} 
+                    {{ form_row(visitor.lastName)}}
+                    {{ form_row(visitor.birthDate)}}
+                    {{ form_row(visitor.country)}}
+                    {{ form_row(visitor.discounted)}}
+                    {{ form_row(visitor.cost)}}                
+           
+                </li>
+            {% endfor %}  
+            </ul>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <input type="submit" class="btn" value="Etape Suivante" />
+    </div>
+       
     {{ form_end(form) }}
 
 </div>

@@ -213,4 +213,17 @@ class Visitor
 
         return $this;
     }
+
+
+    /**
+     * @param datetime $birthdate
+     * @return integer $age
+     */
+    public function findAgeYearsOld(datetime $birthDate)
+    
+    {
+        $yearsOld = $birthDate->diff(new DateTime('today'));
+        
+        return $yearsOld->format('%Y');
+    }
 }

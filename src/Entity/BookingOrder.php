@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class BookingOrder
 {
-    public $ticketCount;
+    public $visitorCount = 0;
 
     /**
      * @ORM\Id()
@@ -290,6 +290,18 @@ class BookingOrder
                 $visitor->setBookingOrder(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getVisitorCount(): int
+    {
+        return $this->visitorCount;
+    }
+
+    public function setVisitorCount(int $visitorCount): self
+    {
+        $this->visitorCount = $visitorCount;
 
         return $this;
     }

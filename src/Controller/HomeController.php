@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\Form\BookingData;
+use App\Entity\Visitor;
+use App\Form\BookingOrderType;
 use App\Entity\BookingOrder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,13 +14,19 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 class HomeController extends AbstractController
 {
     /**
-     * @Route("/home", name="home")
-     * @Method({"GET"})
+     * @Route("/", name="home")
+     * @Method({"GET", "POST"})
      */
     public function index(Request $request)
     {
         $bookingOrder = new BookingOrder;
-        $form = $this->createForm(BookingData::class, $bookingOrder);
+        $visitor1 = new Visitor();
+        $visitor1->setFirstName('Dummy');
+        $visitor1->setLastName('FalseName');
+        $visitor1->setBirthDate(new\datetime);
+        $visitor1->setCountry('FR');
+        //
+        $form = $this->createForm(BookingOrderType::class, $bookingOrder);
         
         $form->handleRequest($request);
 

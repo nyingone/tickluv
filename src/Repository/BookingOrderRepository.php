@@ -47,4 +47,35 @@ class BookingOrderRepository extends ServiceEntityRepository
         ;
     }
     */
+
+/**
+ * 
+ */
+    
+    /**
+     * @param datetime $start 
+     * @param datetime $end 
+     * @return daysEntries[] Returns an array of days and visitor count
+     */
+    public function findDaysEntriesFromTo($start, $end): array
+    {   
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT p.expectedDate, p.count as p.visitorCount FROM BookingOrder p
+            WHERE p.expectedDate >= :start
+            AND p.expectedDate <= :end
+            AND p.validatedAt nt null
+            ORDER BY p.expectedDate ASC
+            ';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            'start' => $start,
+            'end' => $end
+        ]);
+
+        // returns an array of arrays (i.e. a raw data set)
+        return $stmt->fetchAll();
+    }
+
 }
