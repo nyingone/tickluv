@@ -2,31 +2,28 @@
 
 namespace App\Controller;
 
-use App\Entity\Visitor;
-use App\Form\BookingOrderType;
-use App\Entity\BookingOrder;
+use App\Entity\Customer;
+use App\Form\HomeType;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class HomeController extends AbstractController
 {
+
     /**
      * @Route("/", name="home")
      * @Method({"GET", "POST"})
      */
-    public function index(Request $request)
+    public function index(Request $request,LoggerInterface $logger, TranslatorInterface $translator)
     {
-        $bookingOrder = new BookingOrder;
-        $visitor1 = new Visitor();
-        $visitor1->setFirstName('Dummy');
-        $visitor1->setLastName('FalseName');
-        $visitor1->setBirthDate(new\datetime);
-        $visitor1->setCountry('FR');
-        //
-        $form = $this->createForm(BookingOrderType::class, $bookingOrder);
+        $translated = $translator->trans('Symfony is great');
+        echo($translated);
+        $form = $this->createForm(HomeType::class );
         
         $form->handleRequest($request);
 

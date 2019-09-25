@@ -2,49 +2,39 @@
 
 namespace App\Form;
 
-use App\Entity\BookingOrder;
+use App\Form\BookingOrderType;
 use App\Form\CustomerType;
-use App\Form\Type\PartTimeCodeType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class BookingOrderType extends AbstractType
+class HomeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('expectedDate', DateType::class, array('attr' => array('class' => 'form-control')))
-            ->add('partTimeCode', PartTimeCodeType::class, array('attr' => ['class' => 'form-control', 'required' => false,]))
-            ->add('visitorCount', NumberType::class, array('attr' => ['class' => 'form-control']))
-
+           
+       
         ;
-            
-        $builder
-            ->add('customer', CustomerType::class)
-        ;
-
         $builder->add('visitors', CollectionType::class, [
-            'entry_type' => VisitorType::class,
+            'entry_type' => BookingOrderType::class,
             'entry_options' => ['label' => false],
             'by_reference' => false,
             'allow_add' => true,
             'allow_delete' => true,
         ]);
+        ;
+            
+        $builder
+            ->add('customer', CustomerType::class, []);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => BookingOrder::class,
-            'choices' => [
-               
-            ],
+        $resolver->setDefaults([     
         ]);
-      
     }
 }

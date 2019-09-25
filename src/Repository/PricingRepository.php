@@ -26,11 +26,10 @@ class PricingRepository extends ServiceEntityRepository
      * @param $partTimeCode
      * @param $discounted
      * @param $yearsomd
-     * @return $cost
+     * @return []
      */
-    public function findLastPricing($expectedDate, $partTimeCode, $discounted, $yearsOld): Float
-    {
-      {
+    public function findLastPricing($expectedDate, $partTimeCode, $discounted, $yearsOld): array
+          {
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = '
@@ -38,7 +37,7 @@ class PricingRepository extends ServiceEntityRepository
             WHERE p.termDate >= :expecteddate
             AND p.discounted = :discounted
             AND p.partTimeCode = :partTimeCode
-            AND p.ageMin <= :yearsOld
+            AND p.ageMin <= :yearsOld                     
             AND p.ageMax > :yearsOld
             ORDER BY p.termDate DESC
             ';

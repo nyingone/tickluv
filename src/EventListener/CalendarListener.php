@@ -28,6 +28,7 @@ class CalendarListener
 
         // find count visitors via BookingOrder group bay day for planned period 
         $start = Datetime(today);
+        $end = new \DateTime('+3 month');
 
         $bookings = $this->getDoctrine()
             ->getRepository(BookingOrder::class)
