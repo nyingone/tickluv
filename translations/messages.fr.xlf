@@ -6,6 +6,22 @@
                 <source>Hello</source>
                 <target>Bonjour</target>
             </trans-unit>
+            <trans-unit id="Day">
+                <source>Day</source>
+                <target>Jour</target>
+            </trans-unit>
+            <trans-unit id="Month">
+                <source>Month</source>
+                <target>Mois</target>
+            </trans-unit>
+             <trans-unit id="Year">
+                <source>Year</source>
+                <target>Année</target>
+            </trans-unit>
+            <trans-unit id="Email">
+                <source>Email</source>
+                <target>Courriel</target>
+            </trans-unit>
             <trans-unit id="Expected_date">
                 <source>Expected date</source>
                 <target>Visite prévue le</target>
@@ -52,11 +68,27 @@
             </trans-unit>
             <trans-unit id="Half_day_and_Full_tarif">
                 <source>Halfday     -Full tarif</source>
-                <target>DemiJournée -Plein Tarif</target>
+                <target>DemiJournée  -Plein Tarif</target>
             </trans-unit>
              <trans-unit id="Half_day_and_half_tarif">
                 <source>Halfday     -Half tarif</source>
-                <target>DemiJournée -Demi Tarif</target>
+                <target>DemiJournée  -Demi Tarif</target>
+            </trans-unit>
+            <trans-unit id="Part_time_code">
+                <source>Part time code</source>
+                <target>Créneau tarifaire</target>
+            </trans-unit>
+             <trans-unit id="Go_ahead">
+                <source>Go ahead</source>
+                <target>Etape suivante</target>
+            </trans-unit>
+            <trans-unit id="Your_visitors">
+                <source>Your visitors</source>
+                <target>Vos visiteurs</target>
+            </trans-unit>
+             <trans-unit id="Your_references_and_tickets_order">
+                <source>Your references and tickets order</source>
+                <target>Vos références et billets commandés</target>
             </trans-unit>
             
             <trans-unit id="symfony_is_great">

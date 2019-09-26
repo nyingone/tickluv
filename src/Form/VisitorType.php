@@ -25,7 +25,6 @@ class VisitorType extends AbstractType
                 'label'    => 'Elligible to discount?',
                 'required' => false,
             ])
-            ->add('cost') 
             ;
     }
 

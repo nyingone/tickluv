@@ -19,9 +19,11 @@ class ParamRepository extends ServiceEntityRepository
         parent::__construct($registry, Param::class);
     }
 
-    // /**
+      // /**
     //  * @return Param[] Returns an array of Param objects
-    //  */
+    // */
+
+
     /*
     public function findByExampleField($value)
     {
@@ -35,7 +37,6 @@ class ParamRepository extends ServiceEntityRepository
         ;
     }
     */
-
     /*
     public function findOneBySomeField($value): ?Param
     {

@@ -11,14 +11,9 @@ use CalendarBundle\Event\CalendarEvent;
 class CalendarListener
 {
 
-    private $BookingOrderRepository;
-    private $ClosingPeriodRepository;
-    private $ScheduleRepository;
-    private $ParamRepository;
-
     private $router;
 
-    public function load(CalendarEvent $calendar): void 
+    public function load(CalendarEvent $calendar, LoggerInterface $logger): void 
     {
        
         $start = $calendar->getStart('')->format('Y-m-d');
@@ -26,15 +21,45 @@ class CalendarListener
 
         $filters = $calendar->getFilters();
 
-        // find count visitors via BookingOrder group bay day for planned period 
+        // AVAILABLE BOOKING PERIOD
         $start = Datetime(today);
-        $end = new \DateTime('+3 month');
+        $end = new \DateTime();
+        $end = new \DateTime('+1 month'); // Default value
+      
+        // BOOKING DELAY ==> LAST BOOKING DATE
+        $params = $this->getDoctrine()
+        ->getRepository(Param::class)
+        ->findOneBy(['refCode'  => "maxBookingOrderDly" ], ['id' => 'DESC']);
 
+        $param = $params;
+
+        // $end = new \DateTime(+ $param->getNumber() month);
+        $interval = new \DateInterval("P". $param->getNumber() ."M");
+        $end->add($interval);
+
+        if($param->getDayNum() === "XX"){
+            $last = new \DateTime($end->format('Y-m-t'));
+        }
+        
+        
+        // IMPERATIVE END DAY OF BOOKING 
+        $params = $this->getDoctrine()
+            ->getRepository(Param::class)
+            ->findBy(['ref_code' => "maxBookingDate" ]);
+
+        // CLOSING PERIODS
+        $closingPeriods = $this->getDoctrine()
+            ->getRepository(ClosingPeriod::class)
+            ->findAll();
+
+
+         // GET RESERVED SEATS per DAY on AVAILABLE BOOKING PERIOD
         $bookings = $this->getDoctrine()
             ->getRepository(BookingOrder::class)
             ->findDaysEntriesFromTo($start, $end);
 
-
+      
+            // present AVAILABLE SEATS instead of RESERVED ONE
         foreach ($bookings as $booking)
         {
             $dayEntry = new Event(

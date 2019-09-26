@@ -16,9 +16,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class BookingOrderType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
+   /*  $builder->add('publishedAt', DateType::class, [
+        'widget' => 'single_text',
+    
+        // prevents rendering it as type="date", to avoid HTML5 date pickers
+        'html5' => false,
+    
+        // adds a class that can be selected in JavaScript
+        'attr' => ['class' => 'js-datepicker'],
+    ]); */
+    
     {
         $builder
-            ->add('expectedDate', DateType::class, array('attr' => array('class' => 'form-control')))
+            ->add('expectedDate', DateType::class,[
+                'widget' => 'single_text',
+                'attr' => ['class' => 'form-control']
+            ])
             ->add('partTimeCode', PartTimeCodeType::class, array('attr' => ['class' => 'form-control', 'required' => false,]))
             ->add('visitorCount', NumberType::class, array('attr' => ['class' => 'form-control']))
 

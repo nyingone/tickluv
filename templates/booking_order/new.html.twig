@@ -13,7 +13,7 @@
 
 <div class="example-wrapper">
    
- <h1>Hello {{ controller_name }}! ✅</h1>
+ <h1>{% trans %} Hello {% endtrans %} {{ controller_name }}! ✅</h1>
     {{ form_start(form) }}
     {# Render the BookingOrder fields #}
     
@@ -41,7 +41,7 @@
     </div>
 
 
-    <h3>Your visitors</h3>     
+    <h3>{% trans %} Your visitors {% endtrans %} </h3>     
     <div  class="col-md-8 offset-md-2" id="visitorList" data-prototype="{{ form_widget(form.visitors.vars.prototype)|e('html_attr') }}">
     {# iterate over each existing Visitor and render fields to enter #}
 
@@ -63,7 +63,7 @@
         </div>
     </div>
     <div class="panel-footer">
-        <input type="submit" class="btn" value="Etape Suivante" />
+        <input type="submit" class="btn" value= "{% trans %} Etape Suivante {% endtrans %} " />
     </div>
        
     {{ form_end(form) }}
