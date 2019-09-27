@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Entity\Customer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -84,7 +83,7 @@ class BookingOrder
     private $cancelledAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="bookings")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="bookingOrders")
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Type(type="App\Entity\Customer")
      * @Assert\Valid

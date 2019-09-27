@@ -70,15 +70,13 @@ class Visitor
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\BookingOrder", inversedBy="visitors")
      * @ORM\JoinColumn(nullable=false)
+     * -----------------------@Assert\Type(type="App\Entity\BookingOrder")
+     * -------------------------@Assert\Valid
      */
     private $bookingOrder;
 
     public function getId(): ?int
     {
-
-
-
-
         return $this->id;
     }
 

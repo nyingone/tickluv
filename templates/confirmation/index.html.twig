@@ -3,18 +3,79 @@
 {% block title %}Hello ConfirmationController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/wamp64/www/tickluv/src/Controller/ConfirmationController.php'|file_link(0) }}">src/Controller/ConfirmationController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/wamp64/www/tickluv/templates/confirmation/index.html.twig'|file_link(0) }}">templates/confirmation/index.html.twig</a></code></li>
-    </ul>
+<div id="tabs">
+  <ul>
+    <li><a href="#fragment-1">One</a></li>
+    <li><a href="#fragment-2">Two</a></li>
+    <li><a href="#fragment-3">Three</a></li>
+  </ul>
+  <div id="fragment-1">
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+  </div>
+  <div id="fragment-2">
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+  </div>
+  <div id="fragment-3">
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+  </div>
+</div>
+
+<h1>{% trans %} Hello {% endtrans %} {{ controller_name }}! ✅</h1>
+    {{ form_start(form) }}
+    {# Render the BookingOrder fields #}
+    
+    <div class="panel-group">
+        <ul>
+            <div  class="col-md-8">
+                
+                    <li id= "calendar-holder">
+                        {{ form_row(form.expectedDate)}}
+                    </li>
+                    <li>
+                        {{ form_row(form.partTimeCode)}}
+                    </li>
+                    <li>
+                        {{ form_row(form.visitorCount)}}
+                    </li>
+                                    
+                    <li>
+                        {{ form_row(form.customer)}}
+                    </li>
+                
+            </div>
+        </ul>
+
+    </div>
+
+
+    <h3>{% trans %} Your visitors {% endtrans %} </h3>     
+    <div  class="col-md-8 offset-md-2" id="visitorList" data-prototype="{{ form_widget(form.visitors.vars.prototype)|e('html_attr') }}">
+    {# iterate over each existing Visitor and render fields to enter #}
+
+    
+        <div class= "Panel panel-info">
+            <ul class="guests">
+            {% for visitor in form.visitors %}
+                <li>
+                    {{ form_row(visitor.firstName)}} 
+                    {{ form_row(visitor.lastName)}}
+                    {{ form_row(visitor.birthDate)}}
+                    {{ form_row(visitor.country)}}
+                    {{ form_row(visitor.discounted)}}
+                    {{ form_row(visitor.cost)}}                
+           
+                </li>
+            {% endfor %}  
+            </ul>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <input type="submit" class="btn" value= "{% trans %} Etape Suivante {% endtrans %} " />
+    </div>
+       
+    {{ form_end(form) }}
+
 </div>
 {% endblock %}

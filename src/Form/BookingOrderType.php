@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\BookingOrder;
-use App\Form\CustomerType;
 use App\Form\Type\PartTimeCodeType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -37,11 +36,7 @@ class BookingOrderType extends AbstractType
 
         ;
             
-        $builder
-            ->add('customer', CustomerType::class)
-        ;
-
-        $builder->add('visitors', CollectionType::class, [
+               $builder->add('visitors', CollectionType::class, [
             'entry_type' => VisitorType::class,
             'entry_options' => ['label' => false],
             'by_reference' => false,

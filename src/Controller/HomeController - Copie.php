@@ -4,8 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Visitor;
 use App\Entity\BookingOrder;
-use App\Entity\Customer;
-use App\Form\HomeType;
+use App\Form\BookingOrderType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,35 +18,32 @@ class HomeController extends AbstractController
      */
     public function index(Request $request, SessionInterface $session )
     {
-        
-        $customer = new Customer;
-        $bookingOrder = new Bookingorder;
-        $visitor = new Visitor;
+        $BookingOrder = new BookingOrder;
        
         $entityManager = $this->getDoctrine()->getManager();
-
-        $entityManager->persist($visitor);
-        $entityManager->persist($bookingOrder);
-        $entityManager->persist($customer);
-        $home = null;
+        $visitor1 = new Visitor();
+        $visitor1->setFirstName('Dummy');
+        $visitor1->setLastName('FalseName');
+        $visitor1->setBirthDate(new\datetime);
+        $visitor1->setCountry('FR');
+        $BookingOrder->addVisitor($visitor1);
+        
         //
       
 
-        $form = $this->createForm(HomeType::class, $home);
+        $form = $this->createForm(BookingOrderType::class, $BookingOrder);
 
         $form->handleRequest($request);
 
-       //  $entityManager->persist($Customer);
+        $entityManager->persist($BookingOrder);
 
         if ($form->isSubmitted() && $form->isValid()){
-            $entityManager->persist($visitor);
-            $entityManager->persist($bookingOrder);
-            $entityManager->persist($customer);
-
-            $session->set('Customer', $customer);
+            $entityManager->persist($BookingOrder);
+            $session->set('Booking', $BookingOrder);
+            dump($session); die;
             // TO DO
         }
-               return $this->render('home/index.html.twig', [ 'controller_name' => 'HomeController',
+               return $this->render('home/index.html.twig', [ 'controller_name' => 'indexController',
             'form' => $form->createView(),
         ]);
     }

@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Entity\BookingOrder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Customer
 {
+    public $bookingOrderCount = 0;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -37,14 +38,14 @@ class Customer
      */
     private $email;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\BookingOrder", mappedBy="customer")
+     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BookingOrder", mappedBy="customer", orphanRemoval=true, cascade={"persist"})
      */
-    private $bookings;
+    private $bookingOrders;
 
     public function __construct()
     {
-        $this->bookings = new ArrayCollection();
+        $this->bookingOrders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -91,30 +92,42 @@ class Customer
     /**
      * @return Collection|BookingOrder[]
      */
-    public function getBookings(): Collection
+    public function getBookingOrders(): Collection
     {
-        return $this->bookings;
+        return $this->bookingOrders;
     }
 
-    public function addBooking(BookingOrder $booking): self
+    public function addBookingOrder(BookingOrder $bookingOrder): self
     {
-        if (!$this->bookings->contains($booking)) {
-            $this->bookings[] = $booking;
-            $booking->setCustomer($this);
+        if (!$this->bookingOrders->contains($bookingOrder)) {
+            $this->bookingOrders[] = $bookingOrder;
+            $bookingOrder->setCustomer($this);
         }
 
         return $this;
     }
 
-    public function removeBooking(BookingOrder $booking): self
+    public function removeBookingOrder(BookingOrder $bookingOrder): self
     {
-        if ($this->bookings->contains($booking)) {
-            $this->bookings->removeElement($booking);
+        if ($this->bookingOrders->contains($bookingOrder)) {
+            $this->bookingOrders->removeElement($bookingOrder);
             // set the owning side to null (unless already changed)
-            if ($booking->getCustomer() === $this) {
-                $booking->setCustomer(null);
+            if ($bookingOrder->getCustomer() === $this) {
+                $bookingOrder->setCustomer(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBookingOrderCount(): int
+    {
+        return $this->bookingOrderCount;
+    }
+
+    public function setBookingOrderCount(int $bookingOrderCount): self
+    {
+        $this->bookingOrderCount = $bookingOrderCount;
 
         return $this;
     }
