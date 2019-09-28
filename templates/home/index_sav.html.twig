@@ -26,17 +26,24 @@
                 {% for bookingOrder in form.bookingOrders %}
                     <li>
                         {{ form_row(bookingOrder.expectedDate)}}
+                    
                         {{ form_row(bookingOrder.partTimeCode)}}
-
-                        <ul class="visitors" id="visitorList" data-prototype="{{ form_widget(bookingOrder.visitors.vars.prototype)|e('html_attr') }}"> 
-                            <h3>{% trans %} Your guests {% endtrans %} </h3>  
-                            {# iterate over each existing Visitor and render fields to enter #}   
-                            {% for visitor in bookingOrder.visitors %}                                             
-                                <li>
-                                   {% include('inc/_newVisitor.html.twig') %}
-                                </li>
-                            {% endfor %} 
-                        </ul>
+                
+                    <ul class="visitors"   id="visitorList" data-prototype="{{ form_widget(form_row(bookingOrder.visitors.vars.prototype))|e('html_attr') }}"> 
+                                <h3>{% trans %} Your guests {% endtrans %} </h3>  
+                                {# iterate over each existing Visitor and render fields to enter #}
+                                {% for visitor in form.visitors %}                                                    
+                                    <li>
+                                        {{ form_row(visitor.firstName)}} 
+                                        {{ form_row(visitor.lastName)}}
+                                        {{ form_row(visitor.birthDate)}}
+                                        {{ form_row(visitor.country)}}
+                                        {{ form_row(visitor.discounted)}}                 
+                                    </li>                                                    
+                                {% endfor %}  
+                            </ul>      
+                                      
+                    </li>
                 {% endfor %}  
             </ul>     
         </div>
