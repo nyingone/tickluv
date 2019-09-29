@@ -25,14 +25,33 @@
         <div class="container-fluid">
             <div class="col-md-12">
                 {{ include('inc/_navbar.html.twig')}}
-
-                <main role="main" class="container main">
+                
                     {% include 'inc/_flashMsg.html.twig' %}
-
+                   
+                    {% block body %}
+                    <div class = "row">
+                        <main role="main" class="container main">
             
-                    {% block body %}{% endblock %}
-               
-                </main>
+                            <div class= "col-md-6"> 
+                                {% block main %}
+                            
+                                {% endblock %}
+                            </div>
+                                    
+                        </main>
+                    
+                        <aside role="aside" class="container aside">
+                            <div class= "col-md-6"> 
+                                {% block aside %}
+                            
+                                {% endblock %}
+                            </div>
+                        </aside>
+
+                    </div>
+                    {% endblock %}
+                
+         
             </div>
         </div>
 

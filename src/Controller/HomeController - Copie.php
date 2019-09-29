@@ -43,7 +43,12 @@ class HomeController extends AbstractController
             dump($session); die;
             // TO DO
         }
-               return $this->render('home/index.html.twig', [ 'controller_name' => 'indexController',
+        
+        $this->render('inc/summary.html.twig', [
+            'controller_name' => 'ContactController',
+        ]);
+        
+        return $this->render('home/index.html.twig', [ 'controller_name' => 'indexController',
             'form' => $form->createView(),
         ]);
     }

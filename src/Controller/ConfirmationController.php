@@ -5,7 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\BookingOrder;
-use App\Service\ReviewMessage;
+use App\Services\ReviewMessage;
 
 class ConfirmationController extends AbstractController
 {
