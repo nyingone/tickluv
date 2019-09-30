@@ -1,14 +1,14 @@
 <?php
 
-namespace App\EventListener;
+namespace App\Services;
+
 use App\Entity\BookingOrder;
 use App\Entity\ClosingPeriod;
 use App\Entity\Schedule;
 use App\Entity\Param;
-use CalendarBundle\Entity\Event;
-use CalendarBundle\Event\CalendarEvent;
 
-class CalendarListener
+
+class BookingDisponibility
 {
 
     private $router;

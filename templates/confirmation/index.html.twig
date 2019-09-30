@@ -1,9 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ConfirmationController!{% endblock %}
+{% block title %}Confirmationr!{% endblock %}
 
 {% block body %}
 
+<h1>{% trans %} Hello {% endtrans %} {{ controller_name }}! ✅</h1>
+
+{% if app.session %}
+  <p>{{ app.session.customer.lastName }} - {{app.session.customer.email }}</p>
+{% endif %}
+
+{% if bookingOrders %}
+
+{% endif %}
 
 <div id="tabs">
   <ul>
@@ -22,60 +31,6 @@
   </div>
 </div>
 
-<h1>{% trans %} Hello {% endtrans %} {{ controller_name }}! ✅</h1>
-    {{ form_start(form) }}
-    {# Render the BookingOrder fields #}
-    
-    <div class="panel-group">
-        <ul>
-            <div  class="col-md-8">
-                
-                    <li id= "calendar-holder">
-                        {{ form_row(form.expectedDate)}}
-                    </li>
-                    <li>
-                        {{ form_row(form.partTimeCode)}}
-                    </li>
-                    <li>
-                        {{ form_row(form.visitorCount)}}
-                    </li>
-                                    
-                    <li>
-                        {{ form_row(form.customer)}}
-                    </li>
-                
-            </div>
-        </ul>
-
-    </div>
 
 
-    <h3>{% trans %} Your visitors {% endtrans %} </h3>     
-    <div  class="col-md-8 offset-md-2" id="visitorList" data-prototype="{{ form_widget(form.visitors.vars.prototype)|e('html_attr') }}">
-    {# iterate over each existing Visitor and render fields to enter #}
-
-    
-        <div class= "Panel panel-info">
-            <ul class="guests">
-            {% for visitor in form.visitors %}
-                <li>
-                    {{ form_row(visitor.firstName)}} 
-                    {{ form_row(visitor.lastName)}}
-                    {{ form_row(visitor.birthDate)}}
-                    {{ form_row(visitor.country)}}
-                    {{ form_row(visitor.discounted)}}
-                    {{ form_row(visitor.cost)}}                
-           
-                </li>
-            {% endfor %}  
-            </ul>
-        </div>
-    </div>
-    <div class="panel-footer">
-        <input type="submit" class="btn" value= "{% trans %} Etape Suivante {% endtrans %} " />
-    </div>
-       
-    {{ form_end(form) }}
-
-</div>
 {% endblock %}

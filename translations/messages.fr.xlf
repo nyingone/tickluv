@@ -86,6 +86,10 @@
                 <source>Your visitors</source>
                 <target>Vos visiteurs</target>
             </trans-unit>
+            <trans-unit id="Your_guests">
+                <source>Your guests</source>
+                <target>Vos invités</target>
+            </trans-unit>
              <trans-unit id="Your_references_and_tickets_order">
                 <source>Your references and tickets order</source>
                 <target>Vos références et billets commandés</target>

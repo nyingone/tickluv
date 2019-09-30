@@ -78,4 +78,20 @@ class BookingOrderRepository extends ServiceEntityRepository
         return $stmt->fetchAll();
     }
 
+    /**
+    * @return BookingOrder[] Returns an array of BookingOrder objects
+    */
+   
+    public function findByBookingRef($value)
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.bookingOrder = :val')
+            ->setParameter('val', $value)
+            ->orderBy('b.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 }

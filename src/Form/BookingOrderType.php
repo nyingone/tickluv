@@ -6,7 +6,7 @@ use App\Entity\BookingOrder;
 use App\Form\Type\PartTimeCodeType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,9 +27,12 @@ class BookingOrderType extends AbstractType
     
     {
         $builder
-            ->add('expectedDate', DateType::class,[
+            ->add('expectedDate', DateType::class, [
                 'widget' => 'single_text',
-                'attr' => ['class' => 'form-control']
+                'html5' => false,
+                'attr' => ['class' => 'js-datepicker', 
+                'id' => 'datepicker',
+                'placeholder' => 'select a date',]
             ])
             ->add('partTimeCode', PartTimeCodeType::class, array('attr' => ['class' => 'form-control', 'required' => false,]))
             ->add('visitorCount', NumberType::class, array('attr' => ['class' => 'form-control']))
