@@ -42,6 +42,7 @@ class BookingDisponibility
         }
         
         
+        
         // IMPERATIVE END DAY OF BOOKING 
         $params = $this->getDoctrine()
             ->getRepository(Param::class)

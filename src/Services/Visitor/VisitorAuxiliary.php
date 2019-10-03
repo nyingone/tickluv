@@ -3,22 +3,12 @@
 namespace App\Services\Visitor;
 
 
-class VisitorAuxiliary
+class VisitorAuxiliary extends AbstractAuxiliary
 {
 
 private $cost;
 private $age;
 
-
-    public function addVisitor() : void
-    {
-
-    }
-
-    public function delVisitor() : void
-    {
-
-    }
 
     public function estimateCost() : float
     {

@@ -8,8 +8,10 @@ use App\Entity\Customer;
 use App\Entity\BookingOrder;
 use App\Entity\Visitor;
 use App\Services\Param\ParamAuxiliary;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CustomerAuxiliary extends AbstractAuxiliary
 {
@@ -17,17 +19,26 @@ class CustomerAuxiliary extends AbstractAuxiliary
     private $totalAmount = 0;
     
     protected $customer;
-    protected $bookingOrder;
+    protected $bookingRef;
+    protected $bookingOrderStartDate;
+    protected $bookingOrders;
+
+    protected $validator;
+    protected $error_list =[];
+
+
+
+    protected $visitorAuxiliary;
+    protected $bookingOrderAuxiliary;
 
     const KBON = 'bookingOrderNumber'; // K to access & increment Booking Number in Param Table
 
-    public function __construct(EntityManagerInterface $entityManager, SessionInterface $session )
+    public function __construct(EntityManagerInterface $entityManager, SessionInterface $session, ValidatorInterface $validator, VisitorAuxiliary $visitorAuxiliary )
     {
-        // parent::__construct($entityManager);
-        $this->session = $session;  
-
-        
-          
+        parent::__construct($entityManager);
+        $this->session = $session;     
+        $this->validator = $validator ;  
+        $this->visitorAuxilliary = $visitorAuxiliary ;  
     }
 
     public function sessionSet($name = null , $content = null) : void
@@ -92,46 +103,65 @@ class CustomerAuxiliary extends AbstractAuxiliary
 
     /**
      * @Param  
-     * @return object
+     * @return []
      */
-    public function refreshCustomer($form) : object
+    public function refreshCustomer($form) : array
     {
-       // $this->entityManager = getDoctrine()->getManager(Customer::class); 
+      //  $this->entityManager = getDoctrine()->getManager(); 
        $this->customer = $form->getData();
-       if($this->customer->getBookingRef() == null){
-            $this->ParamAuxiliary->getNumber(KBON);
-       }
-       // dd($this->customer);
-       $bookingOrders = $this->customer->getBookingOrders();
-       dd($bookingOrders);
-       foreach ($bookingOrders as $bookingOrder) {
+      
+        if ($this->bookingRef == null) {
+         $this->bookingRef = $this->session->get('_csrf/customer');
+         $this->bookingOrderStartDate = new \DateTime('now');
+        }
+        $this->bookingOrders = $this->customer->getBookingOrders();
+    
+        foreach ($this->bookingOrders as $bookingOrder) {
+          // if ($bookingOrder->getOrderNumber() == null) {
+          //     $this->ParamAuxiliary->getNumber(KBON);
+          //  }
+            
+            $bookingOrder->setBookingRef($this->bookingRef);
+            $bookingOrder->setOrderDate($this->bookingOrderStartDate);
             $visitors = $bookingOrder->getVisitors();
 
             foreach($visitors as $visitor){
-                dd($visitor);
+            
+                $visitor->setCreatedAt($this->bookingOrderStartDate);
+                $visitor->setCost($this->VisitorAuxiiary->estimateCost($visitor));
+
+                $this->addError($this->validator->validate($visitor));
+               
+                // dd($visitor, $this->entityManager);
                 $this->entityManager->persist($visitor);
+                
                 $bookingOrder->addVisitor($visitor);
             }
+
+            $this->addError($this->validator->validate($bookingOrder));
+
             $this->entityManager->persist($bookingOrder);
             $this->customer->addBookingOrder($bookingOrder);
         }
 
-        $this->entityManager->persist($this->customer);
-    
-       dd($form->getData(), $this->customer);
-       $this->entityManager->persist($this->customer);
-      
-     
+        $this->addError($this->validator->validate($this->customer));
+        $this->entityManager->persist($this->customer);       
         
-        if($form):
-          
-            $this->entityManager->flush($this->customer);
+        if($this->error_list == null):
+          $this->entityManager->flush($this->customer);
         endif;
 
         $this->sessionSet();
-        return $this->customer;
+        return $this->error_list;
     }
    
     
+
+    function addError($errors)
+    {
+        if ($errors !== "") {
+        $this->error_list[] = $errors;
+    }
+    }
 
 }

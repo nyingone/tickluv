@@ -3,7 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\VisitorRepository")
@@ -11,29 +12,47 @@ use Symfony\component\Validator\Constraints as Assert;
 class Visitor
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    * @ORM\Id()
+    * @ORM\GeneratedValue()
+    * @ORM\Column(type="integer")
+    */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
+    * @ORM\Column(type="string", length=255)
+    *  @Assert\NotBlank(message="Enter first Name please.")
+    *  @Assert\Length(
+    *      min = 2,
+    *      max = 50,
+    *      minMessage = "Your firstname must be at least {{ limit }} characters long",
+    *      maxMessage = "Your firstname cannot be longer than {{ limit }} characters"
+    * )
+    */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 50,
+     *      minMessage = "Your lastname must be at least {{ limit }} characters long",
+     *      maxMessage = "Your lastname cannot be longer than {{ limit }} characters"
+     * )
      */
     private $lastName;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
+     * @Assert\Date
+     * @var string A "Y-m-d" formatted value
      */
     private $birthDate;
 
     /**
      * @ORM\Column(type="string", length=2)
+     * @Assert\NotBlank
+     * @Assert\Country
      */
     private $country;
 
@@ -214,10 +233,10 @@ class Visitor
 
 
     /**
-     * @param datetime $birthdate
+     * @param date $birthdate
      * @return integer $age
      */
-    public function findAgeYearsOld(datetime $birthDate)
+    public function findAgeYearsOld(\Date $birthDate)
     
     {
         $yearsOld = $birthDate->diff(new DateTime('today'));

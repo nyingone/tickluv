@@ -14,40 +14,57 @@
 <div class= "col-md-12"> 
     <h1>{% trans %} Hello {% endtrans %} {{ controller_name }}! ✅</h1>
  
-    <div class = "row">
+    <div class = "row" id= "cart" >
         
         <div class= "col-md-6"> 
         {{ form_start(form) }}
+
+        {{ form_errors(form) }}
+
         {# Render the BookingOrder fields #}
             <h3>{% trans %} Your orders {% endtrans %} </h3>   
-            
-            <ul class="bookingOrders" id="bookingOrderList" data-prototype="{{ form_widget(form.bookingOrders.vars.prototype)|e('html_attr') }}">
-                {# iterate over each existing BookingOrder and render fields to enter #}
-                {% for bookingOrder in form.bookingOrders %}
-                    <li>
-                        {{ form_row(bookingOrder.expectedDate)}}
-                        {{ form_row(bookingOrder.partTimeCode)}}
+                <ul class="bookingOrders" data-prototype="{{ form_widget(form.bookingOrders.vars.prototype)|e('html_attr') }}">
+                    {# iterate over each existing BookingOrder and render fields to enter #}
+                    {% for bookingOrder in form.bookingOrders %}
+                    
+                        <li>
+                            {{ form_row(bookingOrder.expectedDate)}}
 
-                        <ul class="visitors" id="visitorList" data-prototype="{{ form_widget(bookingOrder.visitors.vars.prototype)|e('html_attr') }}"> 
-                            <h3>{% trans %} Your guests {% endtrans %} </h3>  
-                            {# iterate over each existing Visitor and render fields to enter #}   
-                            {% for visitor in bookingOrder.visitors %}                                             
-                                <li>
-                                   {% include('inc/_newVisitor.html.twig') %}
-                                </li>
-                            {% endfor %} 
-                        </ul>
-                {% endfor %}  
-            </ul>     
+                            {{ form_row(bookingOrder.partTimeCode)}}
+
+                            {{ form_row(bookingOrder.visitorCount)}}
+                    
+                                <ul class="visitors" data-prototype="{{ form_widget(bookingOrder.visitors.vars.prototype)|e('html_attr') }}"> 
+                                    <h3>{% trans %} Your guests {% endtrans %} </h3>  
+                                    {# iterate over each existing Visitor and render fields to enter #}   
+                                    {# % form_theme form.bookingOrder.visitor 'foundation_5_layout.html.twig' % #}
+                                    {% for visitor in bookingOrder.visitors %}                                             
+                                        <li>
+                                        {% include('inc/_newVisitor.html.twig') %}
+                                       <p> xxxxxx </p>
+                                        </li>
+                                    {% endfor %} 
+                                </ul>
+                            <a href = "#" id="add_visitor" class = "btn btn-succes">Add a visitor</a>
+                        
+                        </li>
+                    {% endfor %}  
+                    <a href = "#" id="add_bookingOrder" class = "btn btn-default">Add an other booking day</a>
+                </ul>    
+            
+
         </div>
     
+
         <div  class= "col-md-6">
             <h3>{% trans %} Your references and tickets order{% endtrans %} </h3> 
             {% include('inc/_newCustomer.html.twig') %}
         </div>
     </div>
-        
-    <input type="submit" class="btn btn-primary" value= "{% trans %} Go ahead {% endtrans %} " /> -->
+    
+     {{ form_rest(form) }}
+    <p> <i class="glyphicon glyphicon-chevron-left"></i> </p>
+    <input type="submit" class="btn btn-primary" value= "{% trans %} Go ahead {% endtrans %} " /> 
                 
     {{ form_end(form) }}
  

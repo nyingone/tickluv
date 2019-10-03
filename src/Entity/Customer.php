@@ -33,7 +33,10 @@ class Customer
     private $lastName;
 
     /**
-     * @Assert\Email(checkMX=true)
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email.",
+     *     checkMX = true
+     * )
      * @ORM\Column(type="string", length=255)
      */
     private $email;

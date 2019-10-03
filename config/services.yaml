@@ -25,10 +25,11 @@ services:
         tags: ['controller.service_arguments']
 
     # Need a listener class to load data into the calendar and register it as a service
-    # the listener must be called when the event calendar.set-data is launchd
-    App\EventListener\CalendarListener:
-        tags: 
-            - { name: 'kernel.event_listener', event: 'calendar.set_data', method: load }
+    # the listener must be called when the event calendar.set-data is launchd 
+    # App\EventListener\CalendarListener: 
+    # Comment on 20191001
+         #tags: 
+            # - { name: 'kernel.event_listener', event: 'calendar.set_data', method: load }
 
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
@@ -37,6 +38,24 @@ services:
             - !service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] }
             # If you get transaction issues (e.g. after login) uncomment the line below
             # - { lock_mode: 1 }
+
+    
+    # TickLuv/mailer 
+    App.Services.Email.application_mailer:
+        class: App\src\Services\Email\ApplicationMailer
+        arguments:
+        - "@mailer"
+
+    App.Services.Banner.HTMLMockUpBanner:
+        class: App\Services\Banner\HTMLMockUpBanner
+
+    App.Services.Banner.MockUpListener:
+        class: App\Services\Banner\MockUpListener
+        arguments:
+            ['@App.Services.Banner.HTMLMockUpBanner' , '2019-10-31']
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: processMockup }
+     
 
 
     # add more service definitions when explicit configuration is needed

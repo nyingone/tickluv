@@ -9,6 +9,7 @@ use App\Form\CustomerType;
 use App\Services\Customer\CustomerAuxiliary;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +19,7 @@ class HomeController extends AbstractController
 {
 
     private $entityManager;
+
 
  
     /**
@@ -34,22 +36,31 @@ class HomeController extends AbstractController
         //
        
         $form = $this->createForm(CustomerType::class, $customer);
+        if ($request->isMethod('POST')) {
 
-        $form->handleRequest($request);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()){    
-            
-            $customerAuxiliary->refreshCustomer($form);
-            // dd($customer);
-            // TO DO
-            return $this->redirectToRoute('confirmation');
-            
+            if ($form->isSubmitted() && $form->isValid()){    
+               //  dd($request);
+                $errors = $customerAuxiliary->refreshCustomer($form);
+                // dd($customer);
+                // TO DO
+                if ($errors !== false && $errors !== null){
+                     return $this->redirectToRoute('confirmation');
+                }
+               
+                
+            }
         }
-        
         return $this->render('home/index.html.twig', [ 'controller_name' => 'HomeController',
         'form' => $form->createView(),
         ]);
     }
 
-   
+   public function translating()
+   {
+       $translator = $this->get('translator');
+       $txt = $translator->trans('msg');
+   }
+
 }

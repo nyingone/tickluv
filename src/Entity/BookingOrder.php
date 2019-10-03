@@ -28,16 +28,20 @@ class BookingOrder
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\DateTime()
      */
     private $orderDate;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
+     * @Assert\Date
+     * @var string A "Y-m-d" formatted value
      */
     private $expectedDate;
 
     /**
      * @ORM\Column(type="smallint")
+     * @Assert\NotBlank()
      */
     private $partTimeCode;
 
@@ -95,8 +99,10 @@ class BookingOrder
      */
     private $visitors;
 
+
     public function __construct()
     {
+        $this->orderDate         = new \Datetime();
         $this->visitors = new ArrayCollection();
     }
 
