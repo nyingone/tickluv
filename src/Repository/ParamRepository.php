@@ -3,20 +3,34 @@
 namespace App\Repository;
 
 use App\Entity\Param;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Interfaces\ParamRepositoryInterface;
 
-/**
- * @method Param|null find($id, $lockMode = null, $lockVersion = null)
- * @method Param|null findOneBy(array $criteria, array $orderBy = null)
- * @method Param[]    findAll()
- * @method Param[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class ParamRepository extends ServiceEntityRepository
+
+class ParamRepository implements ParamRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private const ENTITY = Param::class;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+    /**
+     * 
+     * @var ObjectRepository
+     */
+    private $objectRepository;
+
+     public function __construct(EntityManagerInterface $entityManager) 
     {
-        parent::__construct($registry, Param::class);
+        $this->entityManager = $entityManager;  
+        $this->objectRepository = $this->entityManager->getRepository(self::ENTITY);
+    }
+
+
+    public function findAll()
+    {
+        return $this->objectRepository->findAll();
     }
 
       // /**

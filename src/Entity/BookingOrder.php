@@ -7,11 +7,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+//  * @ORM\Entity(repositoryClass="App\Repository\BookingOrderRepository")
+
 /**
- * @ORM\Entity(repositoryClass="App\Repository\BookingOrderRepository")
+ * @ORM\Entity
  */
 class BookingOrder
 {
+    /**
+    * @Assert\NotBlank()
+    */
     public $visitorCount = 0;
 
     /**
@@ -41,7 +46,7 @@ class BookingOrder
 
     /**
      * @ORM\Column(type="smallint")
-     * @Assert\NotBlank()
+     * @Assert\Choice(callback={"App\Services\ParamService", "getPartTimeCodes"})
      */
     private $partTimeCode;
 

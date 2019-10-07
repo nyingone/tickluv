@@ -3,55 +3,55 @@
 namespace App\Repository;
 
 use App\Entity\BookingOrder;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use App\Services\ClosingPeriodService;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Interfaces\BookingOrderRepositoryInterface;
 
-/**
- * @method BookingOrder|null find($id, $lockMode = null, $lockVersion = null)
- * @method BookingOrder|null findOneBy(array $criteria, array $orderBy = null)
- * @method BookingOrder[]    findAll()
- * @method BookingOrder[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class BookingOrderRepository extends ServiceEntityRepository
+final class BookingOrderRepository implements BookingOrderRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, BookingOrder::class);
-    }
-
-    // /**
-    //  * @return BookingOrder[] Returns an array of BookingOrder objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?BookingOrder
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
-
-/**
- * 
- */
     
+    private const ENTITY = BookingOrder::class;
+/**
+ * Undocumented variable
+ *
+ * @var EntityManager
+ */
+   private $entityManager;
+
+   /**
+    * Undocumented variable
+    *
+    * @var ObjectRepository
+    */
+   private $objectRepository;
+
+    /**
+     * Repository by composition not inheritance
+     *      
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager, ClosingPeriodService $closingPeriodService)
+    {
+        $this->entityManager = $entityManager;
+        $this->objectRepository = $this->entityManager->getRepository(self::ENTITY);
+
+        
+    }
+
+
+    public function find(int $id): ?BookingOrder
+    {
+        $bookingOrder = $this->objectRepository->find($id);
+        return $bookingOrder;
+    }
+
+    public function save(BookingOrder $bookingOrder): void
+    {
+        $this->entityManager->persist($bookingOrder);
+        // $this->entityManager->flush
+    }
+
+  
     /**
      * @param datetime $start 
      * @param datetime $end 

@@ -3,48 +3,50 @@
 namespace App\Repository;
 
 use App\Entity\Customer;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Interfaces\CustomerRepositoryInterface;
 
-/**
- * @method Customer|null find($id, $lockMode = null, $lockVersion = null)
- * @method Customer|null findOneBy(array $criteria, array $orderBy = null)
- * @method Customer[]    findAll()
- * @method Customer[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class CustomerRepository extends ServiceEntityRepository
+
+class CustomerRepository implements CustomerRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private const ENTITY = Customer::class;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+    /**
+     * 
+     * @var ObjectRepository
+     */
+    private $objectRepository;
+
+
+    public function __construct(EntityManagerInterface $entityManager) 
     {
-        parent::__construct($registry, Customer::class);
+        $this->entityManager = $entityManager;  
+        $this->objectRepository = $this->entityManager->getRepository(self::ENTITY);
     }
 
-    // /**
-    //  * @return Customer[] Returns an array of Customer objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function find($id): ?Customer
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->entityManager->find(self::ENTITY, $id->toString());
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Customer
+    public function findOneByEmail(string $email): ?Customer
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $this->objectRepository->findOneBy(['email' => $email]);
     }
-    */
+
+    public function save(Customer $customer): void
+    {
+        $this->entityManager->persist($customer);
+        $this->entityManager->flush();
+    }
+
+    public function remove(Customer $customer): void
+    {
+        $this->entityManager->remove($customer);
+        $this->entityManager->flush();
+    }
 }

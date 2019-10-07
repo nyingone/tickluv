@@ -94,6 +94,10 @@ class Visitor
      */
     private $bookingOrder;
 
+
+    private $ageYearsOld;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -131,6 +135,8 @@ class Visitor
     public function setBirthDate(\DateTimeInterface $birthDate): self
     {
         $this->birthDate = $birthDate;
+        
+        setAgeYearsOld();
 
         return $this;
     }
@@ -236,11 +242,16 @@ class Visitor
      * @param date $birthdate
      * @return integer $age
      */
-    public function findAgeYearsOld(\Date $birthDate)
+    public function setAgeYearsOld()
     
     {
-        $yearsOld = $birthDate->diff(new DateTime('today'));
+        $this->ageYearsOld = $this->birthDate->diff(new DateTime('today'));
         
-        return $yearsOld->format('%Y');
+        // return $yearsOld->format('%Y');
+    }
+
+    public function getAgeYearsOld()
+    {
+     return $this->ageYearsOld->format('%Y');
     }
 }

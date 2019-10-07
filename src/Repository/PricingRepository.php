@@ -2,10 +2,9 @@
 
 namespace App\Repository;
 
+use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Pricing;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Symfony\Component\Config\Definition\FloatNode;
+use App\Interfaces\PricingRepositoryInterface;
 
 /**
  * @method Pricing|null find($id, $lockMode = null, $lockVersion = null)
@@ -13,11 +12,19 @@ use Symfony\Component\Config\Definition\FloatNode;
  * @method Pricing[]    findAll()
  * @method Pricing[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PricingRepository extends ServiceEntityRepository
+class PricingRepository implements PricingRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private $entityManager;
+
+    private $pricingrepository;
+
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($registry, Pricing::class);
+      //  $this->entityManager = $entityManager;
+       // $this->pricingrepository = $this->entityManager->getRepository(Pricing::class);
+
     }
 
    
@@ -28,29 +35,30 @@ class PricingRepository extends ServiceEntityRepository
      * @param $yearsomd
      * @return []
      */
-    public function findLastPricing($expectedDate, $partTimeCode, $discounted, $yearsOld): array
+    public function findLastPricing($date, $partTimeCode, $discounted, $yearsOld): array
           {
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = '
             SELECT * FROM pricing p
-            WHERE p.termDate >= :expecteddate
+            WHERE p.termDate >= :date
             AND p.discounted = :discounted
             AND p.partTimeCode = :partTimeCode
             AND p.ageMin <= :yearsOld                     
             AND p.ageMax > :yearsOld
             ORDER BY p.termDate DESC
             ';
-        $stmt = $conn->prepare($sql);
+      /*  $stmt = $conn->prepare($sql);
         $stmt->execute([
-            'expectedDate' => $expectedDate,
+            'date' => $date,
             'discounted' => $discounted,
             'partTimeCode' => $partTimeCode,
             'yearsOld'  => $yearsOld
-            ]);
+            ]); */
 
+            return ['xx'];
     // returns an array of arrays (i.e. a raw data set)
-        return $stmt->fetchAll();
+     //   return $stmt->fetchAll();
     }
        
     // /**

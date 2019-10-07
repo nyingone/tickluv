@@ -2,65 +2,67 @@
 
 namespace App\Controller;
 
-use App\Entity\Visitor;
-use App\Entity\BookingOrder;
-use App\Entity\Customer;
-use App\Form\CustomerType;
-use App\Services\Customer\CustomerAuxiliary;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use App\Form\CustomerType;
+use App\Services\ParamService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Services\Auxiliary\CustomerAuxiliary;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
 
-    private $entityManager;
+    private $bookingDispo = [];
+    private $customer;
+    private $closingPeriodService;
 
 
+   // public function __Construct( CustomerAuxiliary $customerAuxiliary)
+    public function __Construct(CustomerAuxiliary $customerAuxiliary, ParamService $paramService)
+    {  
+        $this->paramService = $paramService;
+        $this->customerAuxiliary = $customerAuxiliary;
+        $this->customer = $customerAuxiliary->setCustomer();
+    }
+    
  
     /**
      * @Route("/", name="home")
      * @Method{"GET"}
      */
-    public function index(Request $request, CustomerAuxiliary $customerAuxiliary, EntityManagerInterface $entityManager, SessionInterface $session)
+    public function index(Request $request)
     {
-       
-               // $session->setName('Anonymous');
-        $customer = $customerAuxiliary->setCustomer();
-       //  $customer =  $session->get('Customer');
-        // dd($session, $customer);
-        //
-       
-        $form = $this->createForm(CustomerType::class, $customer);
-        if ($request->isMethod('POST')) {
+        $form = $this->createForm(CustomerType::class, $this->customer);
+     
 
-            $form->handleRequest($request);
+        $form->handleRequest($request);
+        
+        $this->customerAuxiliary->preControlData($form->getData());
+        
+        if ($form->isSubmitted() && $form->isValid()){    
 
-            if ($form->isSubmitted() && $form->isValid()){    
-               //  dd($request);
-                $errors = $customerAuxiliary->refreshCustomer($form);
-                // dd($customer);
-                // TO DO
-                if ($errors !== false && $errors !== null){
-                     return $this->redirectToRoute('confirmation');
-                }
-               
-                
+            $errors = $this->customerAuxiliary->refreshCustomer($form);
+            
+            if ($errors !== false && $errors !== null){
+                    return $this->redirectToRoute('confirmation');
             }
+            
         }
+        
         return $this->render('home/index.html.twig', [ 'controller_name' => 'HomeController',
         'form' => $form->createView(),
         ]);
     }
 
-   public function translating()
+   public function translating($txt0)
    {
        $translator = $this->get('translator');
-       $txt = $translator->trans('msg');
+       $txt = $translator->trans($txt0);
+       return $txt;
    }
 
 }

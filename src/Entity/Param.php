@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\ParamRepository")
+ * @ORM\Entity
  */
 class Param
 {
@@ -45,6 +45,11 @@ class Param
      * @ORM\Column(type="integer")
      */
     private $number;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $list;
 
  
     /**
@@ -129,6 +134,17 @@ class Param
         return $this;
     }
 
+    public function getList(): ?string
+    {
+        return $this->list;
+    }
+
+    public function setList(string $list): self
+    {
+        $this->list = $list;
+
+        return $this;
+    }
   
     public function getUpdatedAt(): ?\DateTimeInterface
     {

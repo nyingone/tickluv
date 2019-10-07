@@ -17,7 +17,7 @@
     {{ form_start(form) }}
     {# Render the Visitorfields #}
     
-    <h3>Your visitors</h3>     
+    <h3> {% trans %}Visitor Infos {% endtrans %}</h3>     
     <div  class="col-sm-8" id="visitorList" data-prototype="{{ form_widget(form.visitors.vars.prototype)|e('html_attr') }}">
     {# iterate over each existing Visitor and render fields to enter #}
 

@@ -1,23 +1,22 @@
 <?php
 
-namespace App\Services\Customer;
+namespace App\Services\Auxiliary;
 
-
-use App\Services\AbstractAuxiliary;
+// use App\Services\AbstractAuxiliary;
+use App\Entity\Visitor;
 use App\Entity\Customer;
 use App\Entity\BookingOrder;
-use App\Entity\Visitor;
-use App\Services\Param\ParamAuxiliary;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Interfaces\CustomerRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class CustomerAuxiliary extends AbstractAuxiliary
+class CustomerAuxiliary 
 {
     private $bookingOrderCount = 0;
     private $totalAmount = 0;
     
+    protected $entityManager; 
     protected $customer;
     protected $bookingRef;
     protected $bookingOrderStartDate;
@@ -26,19 +25,20 @@ class CustomerAuxiliary extends AbstractAuxiliary
     protected $validator;
     protected $error_list =[];
 
-
-
     protected $visitorAuxiliary;
     protected $bookingOrderAuxiliary;
 
     const KBON = 'bookingOrderNumber'; // K to access & increment Booking Number in Param Table
 
-    public function __construct(EntityManagerInterface $entityManager, SessionInterface $session, ValidatorInterface $validator, VisitorAuxiliary $visitorAuxiliary )
+  //  public function __construct(CustomerRepositoryInterface $customerRepository, SessionInterface $session, ValidatorInterface $validator, BookingOrderAuxiliary $bookingOrderAuxiliary)
+
+    public function __construct(CustomerRepositoryInterface $customerRepository, SessionInterface $session, ValidatorInterface $validator, BookingOrderAuxiliary $bookingOrderAuxiliary)
     {
-        parent::__construct($entityManager);
+        $this->customerRepository = $customerRepository;  
         $this->session = $session;     
         $this->validator = $validator ;  
-        $this->visitorAuxilliary = $visitorAuxiliary ;  
+        $this->bookingOrderAuxiliary = $bookingOrderAuxiliary ;  
+       
     }
 
     public function sessionSet($name = null , $content = null) : void
@@ -51,6 +51,12 @@ class CustomerAuxiliary extends AbstractAuxiliary
     
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [object] $customer
+     * @return object
+     */
     public function setCustomer($customer = null ) : object
     {
        
@@ -70,13 +76,51 @@ class CustomerAuxiliary extends AbstractAuxiliary
         return $this->customer;
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param Customer $customer
+     * @return Customer $customer
+     */
+    public function preControlData($customer): object
+    {
+        $errors = [];
+        $bookingOrders = $customer->getbookingOrders();
+        foreach($bookingOrders as $bookingOrder)
+        {
+           $error = $this->bookingOrderAuxiliary->headControl($bookingOrder);
+            // Init. first Visitor
+            if ($error = "" && $bookingOrderCount = 0) {
+                $visitor = new Visitor();  
+                $bookingOrder->addVisitor($visitor);
+            } 
+          if (is_array($error))
+          {
+            $result = array_merge($errors, $error);
+            $errors = $result;
+          }
+           
+        }
+
+        if (is_array($error))
+        {
+            foreach ($errors as $error)
+            {
+                $this->session->getFlashBag()->add($error.join(','));
+            }    
+        }
+        
+        $this->sessionSet('cutomer', $customer);
+        return $customer;      
+    }
+
     public function addBookingOrder($bookingOrder = null)
     {
         if ($bookingOrder == null)
         { 
             $bookingOrder = new BookingOrder();  
-            $visitor = new Visitor();  
-            $bookingOrder->addVisitor($visitor);
+           // $visitor = new Visitor();  
+           //  $bookingOrder->addVisitor($visitor);
         }
 
         $this->bookingOrderCount ++;
@@ -99,8 +143,7 @@ class CustomerAuxiliary extends AbstractAuxiliary
     {
         return $this->totalAmount;
     }
-
-
+ 
     /**
      * @Param  
      * @return []
@@ -128,7 +171,9 @@ class CustomerAuxiliary extends AbstractAuxiliary
             foreach($visitors as $visitor){
             
                 $visitor->setCreatedAt($this->bookingOrderStartDate);
-                $visitor->setCost($this->VisitorAuxiiary->estimateCost($visitor));
+                $cost = $this->pricingService->getVisitorTarif($this->bookingOrderStartDate, $visitor->getPartTimeCode(), $visitor->getDiscounted(),$visitor->getAge()) ;
+                $visitor->setCost($cost);
+                
 
                 $this->addError($this->validator->validate($visitor));
                
@@ -140,17 +185,14 @@ class CustomerAuxiliary extends AbstractAuxiliary
 
             $this->addError($this->validator->validate($bookingOrder));
 
-            $this->entityManager->persist($bookingOrder);
+            // $this->entityManager->persist($bookingOrder);
             $this->customer->addBookingOrder($bookingOrder);
         }
 
         $this->addError($this->validator->validate($this->customer));
-        $this->entityManager->persist($this->customer);       
+        // $this->entityManager->persist($this->customer);     
+        $this->customerRepository->persist($this->customer);  
         
-        if($this->error_list == null):
-          $this->entityManager->flush($this->customer);
-        endif;
-
         $this->sessionSet();
         return $this->error_list;
     }
@@ -163,5 +205,31 @@ class CustomerAuxiliary extends AbstractAuxiliary
         $this->error_list[] = $errors;
     }
     }
+
+
+    public function loadCustomerByEmail($email): Customer
+    {
+        $customer = $this->userRepository->findOneByEmail($email);
+
+        if ($customer !== null) {
+            return $customer;
+        }
+        throw new Exception(
+            sprintf('Email "%s" does not exist.', $email)
+        );
+    }
+    
+    
+    public function validateCustomer(Customer $customer): Customer
+    {
+        if (!$customer instanceof User) {
+            throw new Exception(
+                sprintf('Instances of "%s" are not supported.', \get_class($customer))
+            );
+        }
+        $id = $customer->getId();
+        return $this->find($customer);
+    }
+
 
 }

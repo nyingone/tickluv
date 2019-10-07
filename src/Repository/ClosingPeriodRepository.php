@@ -3,48 +3,44 @@
 namespace App\Repository;
 
 use App\Entity\ClosingPeriod;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use App\Interfaces\ClosingPeriodRepositoryInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * @method ClosingPeriod|null find($id, $lockMode = null, $lockVersion = null)
- * @method ClosingPeriod|null findOneBy(array $criteria, array $orderBy = null)
- * @method ClosingPeriod[]    findAll()
- * @method ClosingPeriod[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class ClosingPeriodRepository extends ServiceEntityRepository
+
+final class ClosingPeriodRepository implements ClosingPeriodRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    private const ENTITY = ClosingPeriod::class;
+
+    /**
+     * Undocumented variable
+     *
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+    /**
+     * Undocumented variable
+     *
+     * @var [type]
+     */
+    private $objectRepository;
+
+    
+    public function __construct(EntityManagerInterface $entityManager) 
     {
-        parent::__construct($registry, ClosingPeriod::class);
+        $this->entityManager = $entityManager;
+        $this->objectRepository = $this->entityManager->getRepository(self::ENTITY);
     }
 
-    // /**
-    //  * @return ClosingPeriod[] Returns an array of ClosingPeriod objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?ClosingPeriod
+    /**
+     * Undocumented function
+     *
+     * @return array
+     */
+    public function findAllClosedPeriod()
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $this->objectRepository->findAll();
+       
     }
-    */
+  
 }

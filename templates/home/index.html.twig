@@ -23,16 +23,17 @@
 
         {# Render the BookingOrder fields #}
             <h3>{% trans %} Your orders {% endtrans %} </h3>   
+                <aside >
+                    <p id = "JS_message"> <p>
+                </aside>
                 <ul class="bookingOrders" data-prototype="{{ form_widget(form.bookingOrders.vars.prototype)|e('html_attr') }}">
                     {# iterate over each existing BookingOrder and render fields to enter #}
                     {% for bookingOrder in form.bookingOrders %}
                     
                         <li>
-                            {{ form_row(bookingOrder.expectedDate)}}
-
-                            {{ form_row(bookingOrder.partTimeCode)}}
-
-                            {{ form_row(bookingOrder.visitorCount)}}
+                            <span class="required_N0"> {{ form_row(bookingOrder.expectedDate)}} </span>
+                            <span class="required_N0"> {{ form_row(bookingOrder.partTimeCode)}} </span>
+                            <span class="required_N0"> {{ form_row(bookingOrder.visitorCount)}} </span>
                     
                                 <ul class="visitors" data-prototype="{{ form_widget(bookingOrder.visitors.vars.prototype)|e('html_attr') }}"> 
                                     <h3>{% trans %} Your guests {% endtrans %} </h3>  
@@ -49,7 +50,7 @@
                         
                         </li>
                     {% endfor %}  
-                    <a href = "#" id="add_bookingOrder" class = "btn btn-default">Add an other booking day</a>
+                    <a href = "#" id="add_bookingOrder" class = "btn btn-default" >Add an other booking day</a>
                 </ul>    
             
 

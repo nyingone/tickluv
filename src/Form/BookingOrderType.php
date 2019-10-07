@@ -33,8 +33,8 @@ class BookingOrderType extends AbstractType
                 'placeholder' => 'select a date',
                 ]
             ])
-            ->add('partTimeCode', PartTimeCodeType::class, array('attr' => ['class' => 'form-control', 'required' => false,]))
-            ->add('visitorCount', NumberType::class, array('attr' => ['class' => 'form-control']))
+            ->add('partTimeCode', PartTimeCodeType::class, array('attr' => ['class' => 'form-control',  'required' => false,]))
+            ->add('visitorCount', NumberType::class, array('attr' => ['class' => 'form-control', 'type' => 'Number']))
 
         ;
         $formModifier = function (FormInterface $form, $expectedDate) {
