@@ -37,20 +37,16 @@ class HomeController extends AbstractController
     public function index(Request $request)
     {
         $form = $this->createForm(CustomerType::class, $this->customer);
-     
-
         $form->handleRequest($request);
         
-        $this->customerAuxiliary->preControlData($form->getData());
+       //  $this->customerAuxiliary->preControlData($form->getData());
         
         if ($form->isSubmitted() && $form->isValid()){    
 
-            $errors = $this->customerAuxiliary->refreshCustomer($form);
+            $this->customer  = $form->getData();
             
-            if ($errors !== false && $errors !== null){
+    
                     return $this->redirectToRoute('confirmation');
-            }
-            
         }
         
         return $this->render('home/index.html.twig', [ 'controller_name' => 'HomeController',

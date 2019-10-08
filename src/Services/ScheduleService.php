@@ -3,14 +3,63 @@
 namespace App\Services;
 
 use App\Entity\Schedule;
+use App\Interfaces\ScheduleRepositoryInterface;
 
 
 class ScheduleService
 {
+  private $scheduleRepository;
+  private $closedDaysOfWeek = [];
+  private $allPartTimeVisitingHours = [];
+  private $partTimeVisitingHours = [];
+  private $todayVisitingHours = [];
+  private $schedules;
 
-  public function __construct()
+
+    public function __construct(ScheduleRepositoryInterface $scheduleRepository)
     {
-        
+      $this->scheduleRepository = $scheduleRepository;
+      $this->schedules = $this->scheduleRepository->findAll();
+
+     
+
+      foreach($this->schedules as $schedule)
+      {
+        if($schedule->getOpeningTime() == null):
+          $this->closedDaysOfWeek[] = $schedule;
+        else:
+          $this->allPartTimeVisitingHours[] = $schedule;
+        endif;
+      }
+    
+      
+    }
+
+
+    public function findClosedDays():array
+    {
+      return $this->closedDaysOfWeek;
+    }
+
+
+    public function findVisitingHours():array
+    {  
+      return $this->allPartTimeVisitingHours;
+    }
+
+
+    public function findTodayVisitingHours():array
+    {
+      $current_time = date("H:i:s");
+
+      foreach ($this->allPartTimeVisitingHours as $schedule)
+      {
+          if ($current_time < $schedule->getLastEntryTime()):
+            $this->todayVisitingHours[] = $schedule;
+          endif;
+      }
+      
+      return $this->todayVisitingHours;
     }
     
 }

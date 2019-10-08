@@ -29,9 +29,10 @@ class ParamService
                 if($param->getRefCode() == "maxBookingOrderDly")
                 {
                     $nbMonths = $param->getNumber();
-                    $this->EndOfBooking = new \DateTime('+'. $nbMonths . 'month');
-                    if($param->getDayNum() !== ''):
+                    $this->endOfBooking = new \DateTime('+'. $nbMonths . 'month');
 
+                    if($param->getDayNum() !== ''):
+                        $this->endOfBooking  = new \DateTime($this->endOfBooking ->format('Y-m-t'));
                     endif;
                 } else{
                     if($param->getRefCode() == "ImperativeBookingEnd")
@@ -42,7 +43,7 @@ class ParamService
                     } else{
                         if($param->getRefCode() == "partTimeCodes")
                         {
-
+                            $this->partTimeCodes =  $param->getList();
                         }
                     }
                 }
@@ -55,17 +56,29 @@ class ParamService
     }
 
    
-    public function getBookingNumber()
+    public function allocateBookingNumber()
     {
         return $this->paramRepository->saveNumber(KBON);
     }
 
-    public function findPartTimeCode()
+    public function findPartTimeCodes()
     {
         return $this->partTimeCodes;
-       dd($this->params);
     }
     
+    public function findEndOfBooking()
+    {
+        if($this->endOfBooking <= $this->imperativeEndOfBooking):
+            return  $this->endOfBooking;
+        else:
+            return $this->imperativeEndOfBooking;
+        endif;
+    }
+
+    public function findImperativeEndOfBooking()
+    {
+        return $this->imperativeEndOfBooking;
+    }
     /**
      * Find "MaxVisitors" per day explicited by Year, ou yearMonth, or day
      *

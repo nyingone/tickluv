@@ -38,23 +38,17 @@ class BookingOrderAuxiliary
     {
         $error = [];
         $error[] = $this->expectedDateCtl($bookingOrder->getExpectedDate());
+     //   dd($bookingOrder->getExpectedDate(),$error, $this->closedPeriods);
         $error[] = $this->partTimeCodeCtl($bookingOrder->getPartTimeCode());
         $error[] = $this->visitorCountCtl($bookingOrder->getVisitorCount());
         
         return $error;
     }
     
-    public function expectedDateCtl($expectedDate = null): array
+    public function expectedDateCtl($expectedDate = null)
     {
-        if ($expectedDate == null):
-            return (['danger', 'Choose a day of visit!']);
-        else:
-            if($this->closedPeriods.some($expectedDate)):
-                return (['danger', 'This is a closed period!']);
-            else:
-
-            endif;
-        endif;
+       
+       
     }
 
     public function partTimeCodeCtl($partTimeCode = null)
@@ -72,13 +66,7 @@ class BookingOrderAuxiliary
     }
 
     public function findDefault()
-    {
-         // GET CLOSED BOOKING PERIODS 
-        $this->closedPeriods = $this->closingPeriodService->findClosedPeriods();
-        
-         // GET  BOOKING DLY
-        $this->bookingStart = new \Datetime();
-        $end = new \DateTime('+1 month'); // Default value       
+    {    
 
          // GET MAX RESERVED SEATS per DAY on AVAILABLE BOOKING PERIOD
         

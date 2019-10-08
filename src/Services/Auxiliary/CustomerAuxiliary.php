@@ -16,7 +16,6 @@ class CustomerAuxiliary
     private $bookingOrderCount = 0;
     private $totalAmount = 0;
     
-    protected $entityManager; 
     protected $customer;
     protected $bookingRef;
     protected $bookingOrderStartDate;
@@ -25,7 +24,6 @@ class CustomerAuxiliary
     protected $validator;
     protected $error_list =[];
 
-    protected $visitorAuxiliary;
     protected $bookingOrderAuxiliary;
 
     const KBON = 'bookingOrderNumber'; // K to access & increment Booking Number in Param Table
@@ -38,7 +36,6 @@ class CustomerAuxiliary
         $this->session = $session;     
         $this->validator = $validator ;  
         $this->bookingOrderAuxiliary = $bookingOrderAuxiliary ;  
-       
     }
 
     public function sessionSet($name = null , $content = null) : void
@@ -82,45 +79,13 @@ class CustomerAuxiliary
      * @param Customer $customer
      * @return Customer $customer
      */
-    public function preControlData($customer): object
-    {
-        $errors = [];
-        $bookingOrders = $customer->getbookingOrders();
-        foreach($bookingOrders as $bookingOrder)
-        {
-           $error = $this->bookingOrderAuxiliary->headControl($bookingOrder);
-            // Init. first Visitor
-            if ($error = "" && $bookingOrderCount = 0) {
-                $visitor = new Visitor();  
-                $bookingOrder->addVisitor($visitor);
-            } 
-          if (is_array($error))
-          {
-            $result = array_merge($errors, $error);
-            $errors = $result;
-          }
-           
-        }
-
-        if (is_array($error))
-        {
-            foreach ($errors as $error)
-            {
-                $this->session->getFlashBag()->add($error.join(','));
-            }    
-        }
-        
-        $this->sessionSet('cutomer', $customer);
-        return $customer;      
-    }
-
+    
     public function addBookingOrder($bookingOrder = null)
     {
         if ($bookingOrder == null)
         { 
             $bookingOrder = new BookingOrder();  
-           // $visitor = new Visitor();  
-           //  $bookingOrder->addVisitor($visitor);
+          
         }
 
         $this->bookingOrderCount ++;
@@ -143,6 +108,18 @@ class CustomerAuxiliary
     {
         return $this->totalAmount;
     }
+
+    public function preControlData($data) 
+    {
+        $this->customer = $data;
+        $this->bookingOrders = $this->customer->getBookingOrders();
+        foreach($this->bookingOrders as $bookingOrder)
+        {
+            ($this->validator->validate($bookingOrder));
+        }
+       
+        // dd($data);
+    }
  
     /**
      * @Param  
@@ -160,9 +137,7 @@ class CustomerAuxiliary
         $this->bookingOrders = $this->customer->getBookingOrders();
     
         foreach ($this->bookingOrders as $bookingOrder) {
-          // if ($bookingOrder->getOrderNumber() == null) {
-          //     $this->ParamAuxiliary->getNumber(KBON);
-          //  }
+        
             
             $bookingOrder->setBookingRef($this->bookingRef);
             $bookingOrder->setOrderDate($this->bookingOrderStartDate);
@@ -190,8 +165,8 @@ class CustomerAuxiliary
         }
 
         $this->addError($this->validator->validate($this->customer));
-        // $this->entityManager->persist($this->customer);     
-        $this->customerRepository->persist($this->customer);  
+  
+
         
         $this->sessionSet();
         return $this->error_list;

@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Schedule;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use App\Interfaces\ScheduleRepositoryInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @method Schedule|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,39 +12,22 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @method Schedule[]    findAll()
  * @method Schedule[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ScheduleRepository extends ServiceEntityRepository
+class ScheduleRepository implements ScheduleRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private const ENTITY= Schedule::class;
+    private $entityManager;
+    private $objectRepository;
+
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($registry, Schedule::class);
+        $this->entityManager = $entityManager;
+        $this->objectRepository = $this->entityManager->getRepository(self::ENTITY);
     }
 
-    // /**
-    //  * @return Schedule[] Returns an array of Schedule objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findAll()
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->objectRepository->findAll();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Schedule
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

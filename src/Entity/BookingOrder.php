@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
+use App\Validator\Constraints as CustomAssert;
 //  * @ORM\Entity(repositoryClass="App\Repository\BookingOrderRepository")
 
 /**
@@ -16,6 +16,7 @@ class BookingOrder
 {
     /**
     * @Assert\NotBlank()
+    * @Assert\Positive
     */
     public $visitorCount = 0;
 
@@ -34,6 +35,7 @@ class BookingOrder
     /**
      * @ORM\Column(type="datetime")
      * @Assert\DateTime()
+ 
      */
     private $orderDate;
 
@@ -41,12 +43,13 @@ class BookingOrder
      * @ORM\Column(type="date")
      * @Assert\Date
      * @var string A "Y-m-d" formatted value
+     * @CustomAssert\IsOpenForBooking
      */
     private $expectedDate;
 
     /**
      * @ORM\Column(type="smallint")
-     * @Assert\Choice(callback={"App\Services\ParamService", "getPartTimeCodes"})
+     * @CustomAssert\IsValidPartTimeCode
      */
     private $partTimeCode;
 
