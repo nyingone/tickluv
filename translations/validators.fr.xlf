@@ -381,6 +381,10 @@
         <source>The CSRF token is invalid. Please try to resubmit the form.</source>
         <target>Le jeton CSRF est invalide. Veuillez renvoyer le formulaire.</target>
       </trans-unit>
+      <trans-unit id="booking_closed_booking_period_or_day" resname="Closed booking period or day">
+        <source>Closed booking period or day.</source>
+        <target>Réservations fermées à cette date.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

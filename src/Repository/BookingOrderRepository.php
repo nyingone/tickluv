@@ -39,9 +39,9 @@ final class BookingOrderRepository implements BookingOrderRepositoryInterface
     }
 
 
-    public function find(int $id): ?BookingOrder
+    public function find(BookingOrder $bookingOrder): ?BookingOrder
     {
-        $bookingOrder = $this->objectRepository->find($id);
+        $bookingOrder = $this->objectRepository->find($bookingOrder);
         return $bookingOrder;
     }
 
@@ -51,6 +51,11 @@ final class BookingOrderRepository implements BookingOrderRepositoryInterface
         // $this->entityManager->flush
     }
 
+    public function remove(BookingOrder $bookingOrder): void
+    {
+        $this->entityManager->remove($bookingOrder);
+        // $this->entityManager->flush
+    }
   
     /**
      * @param datetime $start 
@@ -65,7 +70,7 @@ final class BookingOrderRepository implements BookingOrderRepositoryInterface
             SELECT p.expectedDate, p.count as p.visitorCount FROM BookingOrder p
             WHERE p.expectedDate >= :start
             AND p.expectedDate <= :end
-            AND p.validatedAt nt null
+            AND p.validatedAt not null
             ORDER BY p.expectedDate ASC
             ';
         $stmt = $conn->prepare($sql);
@@ -77,6 +82,8 @@ final class BookingOrderRepository implements BookingOrderRepositoryInterface
         // returns an array of arrays (i.e. a raw data set)
         return $stmt->fetchAll();
     }
+
+    
 
     /**
     * @return BookingOrder[] Returns an array of BookingOrder objects

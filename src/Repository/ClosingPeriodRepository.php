@@ -3,9 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\ClosingPeriod;
-use App\Interfaces\ClosingPeriodRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
-
+use App\Interfaces\ClosingPeriodRepositoryInterface;
 
 final class ClosingPeriodRepository implements ClosingPeriodRepositoryInterface
 {
@@ -37,7 +36,7 @@ final class ClosingPeriodRepository implements ClosingPeriodRepositoryInterface
      *
      * @return array
      */
-    public function findAllClosedPeriod()
+    public function findAll()
     {
         return $this->objectRepository->findAll();
        

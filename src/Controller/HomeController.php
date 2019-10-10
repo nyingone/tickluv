@@ -26,7 +26,7 @@ class HomeController extends AbstractController
     {  
         $this->paramService = $paramService;
         $this->customerAuxiliary = $customerAuxiliary;
-        $this->customer = $customerAuxiliary->setCustomer();
+        $this->customer = $customerAuxiliary->inzCustomer();
     }
     
  
@@ -44,9 +44,7 @@ class HomeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()){    
 
             $this->customer  = $form->getData();
-            
-    
-                    return $this->redirectToRoute('confirmation');
+             return $this->redirectToRoute('confirmation');
         }
         
         return $this->render('home/index.html.twig', [ 'controller_name' => 'HomeController',

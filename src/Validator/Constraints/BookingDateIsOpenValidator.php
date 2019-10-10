@@ -7,12 +7,12 @@ use App\Services\DatComparator;
 use App\Services\ScheduleService;
 use App\Services\ClosingPeriodService;
 use Symfony\Component\Validator\Constraint;
-use App\Validator\Constraints\IsOpenForBooking;
+use App\Validator\Constraints\BookingDateIsOpen;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
-class IsOpenForBookingValidator extends ConstraintValidator
+class BookingDateIsOpenValidator extends ConstraintValidator
 {
     protected $closingPeriodService;
     private $closedPeriods = [];
@@ -26,6 +26,11 @@ class IsOpenForBookingValidator extends ConstraintValidator
     private $todayVisitingHours;
     protected $datComparator;
 
+    private $message;
+
+    // public $msgBookingClosedOn = 'booking_closed_booking_period_or_day';
+    // public $msgBookingOutOfRange = 'booking_out_of_booking_range';
+
     public function __construct(ClosingPeriodService $closingPeriodService, ParamService $paramService, ScheduleService $scheduleService, DatComparator $datComparator)
     {
         $this->closingPeriodService = $closingPeriodService;
@@ -38,8 +43,9 @@ class IsOpenForBookingValidator extends ConstraintValidator
 
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof IsOpenForBooking) {
-            throw new UnexpectedTypeException($constraint, IsOpenForBooking::class);
+        
+        if (!$constraint instanceof BookingDateIsOpen) {
+            throw new UnexpectedTypeException($constraint, BookingDateIsOpen::class);
         }
 
         if (!is_object($value)) {
@@ -51,34 +57,46 @@ class IsOpenForBookingValidator extends ConstraintValidator
         // if ($value == null):
         //    return (['danger', 'Choose a day of visit!']);
         // endif;
-        
-        $sel = true;
+        $strValue = $this->datComparator->convert($value);
+        $sel = true;  
+
+        if( $this->datComparator->isLower($value , $this->bookingStart) || $this->datComparator->isHigher($value , $this->endOfBooking) ):
+            $sel = false;  
+        endif;
+
         if(is_array($this->closedPeriods)):
             foreach($this->closedPeriods as $closedPeriod):
                 if( $this->datComparator->isHigherOrEqual($value , $closedPeriod->getFromDat0()) && $this->datComparator->isLowerOrEqual($value , $closedPeriod->getToDatex()) ):
-                    $sel = false;
+                $sel = false;     
                 endif;
             endforeach;
         endif;
 
-        if(is_array($this->closedDays)):
-            foreach($this->closedDays as $closedDay):
-                if( $closedDay->getdayOfWeek() == $this->datComparator->dayOfWeek($value) ):
-                    $sel = false;
-                endif;
-            endforeach;
-        endif;
-
-        if (((is_array($this->todayVisitingHours) && is_empty($this->todayVisitingHours))) || $this->todayVisitingHours == null ):
-            if( $this->datComparator->isEqual($value)):
-                $sel = false;
+        if ($sel == false):
+            $this->context->buildViolation($constraint->msgBookingClosedOn)
+            ->setParameter('{{ string }}',$strValue)
+            ->setCode(BookingDateIsOpen::BOOKING_CLOSED_ON)
+            ->addViolation();  
+        else:
+            if(is_array($this->closedDays)):
+                foreach($this->closedDays as $closedDay):
+                    if( $closedDay->getDayOfWeek() == $this->datComparator->dayOfWeek($value) ):
+                        $sel = false;
+                    endif;
+                endforeach;
             endif;
-        endif;
 
-        if($sel = false):
-            $this->context->buildViolation($constraint->message)
-            ->setParameter('{{ string }}', $value)
-            ->addViolation(); 
+            if ($sel == false):
+                $this->context->buildViolation($constraint->msgBookingWeeklyClosing)
+                ->setParameter('{{ string }}', $strValue)
+                ->addViolation();  
+            else:
+                if ($this->datComparator->isEqual($value) && $this->todayVisitingHours == null ): 
+                    $this->context->buildViolation($constraint->msgBookingClosedToday)
+                    ->setParameter('{{ string }}', $strValue)
+                    ->addViolation();  
+                endif;
+            endif;
         endif;
             
     }
@@ -88,7 +106,7 @@ class IsOpenForBookingValidator extends ConstraintValidator
          // GET CLOSED BOOKING PERIODS 
         $this->closedPeriods = $this->closingPeriodService->findClosedPeriods();
 
-        $this->bookingStart = new \DateTime;
+        $this->bookingStart = $this->paramService->findstartOfBooking();
 
          // GET  END of BOOKING (DLY or imperative)
         $this->endOfBooking = $this->paramService->findEndOfBooking();
@@ -97,7 +115,6 @@ class IsOpenForBookingValidator extends ConstraintValidator
          $this->closedDays = $this->scheduleService->findClosedDays();
 
          // FIND TODAY Allowed Booking versus VisitingHours
-         $this->toDaySchedule = $this->scheduleService->findTodayVisitingHours();
-
+         $this->todayVisitingHours = $this->scheduleService->findTodayVisitingHours();
     }
 }

@@ -4,12 +4,13 @@ namespace App\Validator\Constraints;
 
 use App\Services\ParamService;
 use Symfony\Component\Validator\Constraint;
+use App\Validator\Constraints\PartTimeCodeIsValid;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 
-class IsValidPartTimeCodeValidator extends ConstraintValidator
+class PartTimeCodeIsValidValidator extends ConstraintValidator
 {
 
     private $paramService;
@@ -24,12 +25,13 @@ class IsValidPartTimeCodeValidator extends ConstraintValidator
         
         array_push($this->paramList, $this->partTimeCodes);
 
+        dd( $this->partTimeCodes);
     }
 
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof IsValidPartTimeCode){
-            throw new UnexpectedTypeExection($constraint, IsValidPartTimeCode::class); 
+        if (!$constraint instanceof PartTimeCodeIsValid){
+            throw new UnexpectedTypeException($constraint, PartTimeCodeIsValid::class); 
         }
 
         if (!int($value) >= 0) {
@@ -39,7 +41,7 @@ class IsValidPartTimeCodeValidator extends ConstraintValidator
         dd('hello', $value, $this->paramList);
         if(!in_array($value, $this->partTimeCodes)):
             $this->context->buildViolation($constraint->message)
-            ->setParameter('{{ $this->paramList }}', $value)
+            ->setParameter('{{ this->paramList }}', $value)
             ->addViolation();
         endif;
     }

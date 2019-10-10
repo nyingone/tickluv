@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -33,11 +34,15 @@ class Schedule
 
     /**
      * @ORM\Column(type="time", nullable=true)
+     * @Assert\Time
+     * @var string A "H:i:s" formatted value
      */
     private $openingTime;
 
     /**
      * @ORM\Column(type="time", nullable=true)
+     * @Assert\Time
+     * @var string A "H:i:s" formatted value
      */
     private $lastEntryTime;
 

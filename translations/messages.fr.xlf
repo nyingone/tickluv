@@ -98,13 +98,25 @@
                 <source>Your orders</source>
                 <target>Vos commandes</target>
             </trans-unit>
-            <trans-unit id="Booking_orders">
+            <trans-unit id="booking_orders">
                 <source>Booking orders</source>
                 <target>Demandes de réservation</target>
             </trans-unit>
             <trans-unit id="symfony_is_great">
                 <source>Symfony is great</source>
                 <target>J'aime Symfony</target>
+            </trans-unit>
+            <trans-unit id="booking_closed_booking_period_or_day" resname="Closed booking period or day">
+                <source>Closed booking period or day</source>
+                <target>Réservations fermées à cette date</target>
+            </trans-unit>
+            <trans-unit id="booking_closed_on_following_days_of_week">
+                <source>Booking closed on Tuesdays and Sundays</source>
+                <target>Réservations fermées les Mardi et Dimanche</target>
+            </trans-unit>
+            <trans-unit id="booking_ended_for_today">
+                <source>Booking closed for today</source>
+                <target>Réservations closes pour aujourd'hui</target>
             </trans-unit>
         </body>
     </file>

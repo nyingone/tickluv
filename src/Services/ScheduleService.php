@@ -54,11 +54,11 @@ class ScheduleService
 
       foreach ($this->allPartTimeVisitingHours as $schedule)
       {
+       
           if ($current_time < $schedule->getLastEntryTime()):
             $this->todayVisitingHours[] = $schedule;
           endif;
       }
-      
       return $this->todayVisitingHours;
     }
     

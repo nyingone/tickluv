@@ -4,11 +4,10 @@ namespace App\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-
 /**
  * @Annotation
  */
-class IsOpenForBooking extends Constraint
+class PartTimeCodeIsValid
 {
-    public $message = 'You chose a closed booking period or day';
+    public $message = "Choose one of the proposed options.";
 }

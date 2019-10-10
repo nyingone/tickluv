@@ -4,29 +4,26 @@ namespace App\Services;
 
 use App\Interfaces\ClosingPeriodRepositoryInterface;
 
+class ClosingPeriodService
 
-final class ClosingPeriodService
 {
-
   private $closingPeriodRepository;
   private $closingPeriods = [];
 
   public function __construct(ClosingPeriodRepositoryInterface $closingPeriodRepository)
-    {
-       $this->closingPeriodRepository = $closingPeriodRepository;
-    }
+  {
+    $this->closingPeriodRepository = $closingPeriodRepository;
+  }
 
    
     public function findClosedPeriods()
     {          
       
         $this->closingPeriods = $this->closingPeriodRepository
-         ->findAllClosedPeriod();
+         ->findAll();
 
         return $this->closingPeriods;
     }
-
-
     
 
 }

@@ -15,8 +15,7 @@ class DatComparator
 
     public function  dayOfWeek($dat0)
     {
-        $time = $this->convert($dat0);
-        return date('S' , $time ) ;
+        return date('w' , $dat0->getTimestamp() ) ;
     }
 
     public function  isEqual($dat = null, $datref= null)
@@ -24,7 +23,7 @@ class DatComparator
         $dat0 = $this->convert($dat);
         $datr = $this->convert($datref);
 
-        if($dat0 = $datr):
+        if($dat0 == $datr):
             return true;
         else:
             return false;
@@ -44,6 +43,17 @@ class DatComparator
         endif;
     }
 
+    public function  isHigher($dat, $datref)
+    {
+        $dat0 = $this->convert($dat);
+        $datr = $this->convert($datref);
+
+        if($dat0 > $datr):
+            return true;
+        else:
+            return false;
+        endif;
+    }
 
     public function  isLowerOrEqual($dat= null, $datref= null)
     {
@@ -51,6 +61,18 @@ class DatComparator
         $datr = $this->convert($datref);
 
         if($dat0 <= $datr):
+            return true;
+        else:
+            return false;
+        endif;
+    }
+
+    public function  isLower($dat= null, $datref= null)
+    {
+        $dat0 = $this->convert($dat);
+        $datr = $this->convert($datref);
+
+        if($dat0 < $datr):
             return true;
         else:
             return false;

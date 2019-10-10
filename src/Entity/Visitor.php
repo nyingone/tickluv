@@ -7,9 +7,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\VisitorRepository")
+ * @ORM\Entity
  */
-class Visitor
+class Visitor 
 {
     /**
     * @ORM\Id()
@@ -136,7 +136,7 @@ class Visitor
     {
         $this->birthDate = $birthDate;
         
-        setAgeYearsOld();
+        $this->setAgeYearsOld();
 
         return $this;
     }
@@ -245,7 +245,7 @@ class Visitor
     public function setAgeYearsOld()
     
     {
-        $this->ageYearsOld = $this->birthDate->diff(new DateTime('today'));
+        $this->ageYearsOld = $this->birthDate->diff(new \DateTime('today'));
         
         // return $yearsOld->format('%Y');
     }

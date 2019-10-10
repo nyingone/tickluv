@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Pricing;
 use App\Interfaces\PricingRepositoryInterface;
+use Doctrine\ORM\EntityManagerInterface;
+
 
 /**
  * @method Pricing|null find($id, $lockMode = null, $lockVersion = null)
@@ -27,6 +28,10 @@ class PricingRepository implements PricingRepositoryInterface
 
     }
 
+    public function findAll()
+    {
+
+    }
    
     /**
      * @param $expectedDate 

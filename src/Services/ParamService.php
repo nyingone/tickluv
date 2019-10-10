@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Interfaces\ParamRepositoryInterface;
 use App\Entity\Param;
+use DateTime;
 
 class ParamService
 {
@@ -12,7 +13,10 @@ class ParamService
     private $maxVisitors = [];
     private $imperativeEndOfBooking ;
     private $endOfBooking ;
-    private const KBON = "bookingOrderNumber";
+    private $startOfBooking ;
+    private $maxBookingVisitors;
+    
+    private const KBON = "BookingOrderNumber";
 
     public function __construct(ParamRepositoryInterface $paramRepository)
     {
@@ -26,7 +30,7 @@ class ParamService
             {
                 $this->maxVisitors[] = $param;
             }else{
-                if($param->getRefCode() == "maxBookingOrderDly")
+                if($param->getRefCode() == "MaxBookingOrderDly")
                 {
                     $nbMonths = $param->getNumber();
                     $this->endOfBooking = new \DateTime('+'. $nbMonths . 'month');
@@ -41,9 +45,14 @@ class ParamService
                         $this->imperativeEndOfBooking = new \Datetime($date);
                        
                     } else{
-                        if($param->getRefCode() == "partTimeCodes")
+                        if($param->getRefCode() == "PartTimeCodes")
                         {
                             $this->partTimeCodes =  $param->getList();
+                        } else{
+                            if($param->getRefCode() == "MaxBookingVisitors")
+                            {
+                                $this->maxBookingVisitors =  $param->getNumber();
+                            }
                         }
                     }
                 }
@@ -54,19 +63,33 @@ class ParamService
      //  dd($this->params);
 
     }
-
    
-    public function allocateBookingNumber()
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
+    public function allocateBookingNumber():string
     {
         return $this->paramRepository->saveNumber(KBON);
     }
 
-    public function findPartTimeCodes()
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
+    public function findPartTimeCodes():string
     {
         return $this->partTimeCodes;
     }
-    
-    public function findEndOfBooking()
+
+    /**
+     * Undocumented function
+     *
+     * @return datetime
+     */
+    public function findEndOfBooking():datetime
     {
         if($this->endOfBooking <= $this->imperativeEndOfBooking):
             return  $this->endOfBooking;
@@ -75,18 +98,45 @@ class ParamService
         endif;
     }
 
-    public function findImperativeEndOfBooking()
+    /**
+     * Undocumented function
+     *
+     * @return datetime
+     */
+    public function findStartOfBooking():datetime
+    {
+        $this->startOfBooking = new \datetime();
+        return  $this->startOfBooking;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return DateTime
+     */
+    public function findImperativeEndOfBooking():DateTime
     {
         return $this->imperativeEndOfBooking;
     }
     /**
      * Find "MaxVisitors" per day explicited by Year, ou yearMonth, or day
      *
-     * @return void
+     * @return 
      */
-    public function findMaxVisitor()
+    public function findMaxVisitors():array
     {
-        return $this->partTimeCodes;
+        return $this->maxVisitors;
     }
+
+    /**
+     * Undocumented function
+     *
+     * @return integer
+     */
+    public function findMaxBookingVisitors():int
+    {
+        return $this->maxBookingVisitors;
+    }
+    
     
 }

@@ -11,6 +11,7 @@ class CustomerRepository implements CustomerRepositoryInterface
 {
 
     private const ENTITY = Customer::class;
+    
     /**
      * @var EntityManagerInterface
      */
@@ -28,7 +29,7 @@ class CustomerRepository implements CustomerRepositoryInterface
         $this->objectRepository = $this->entityManager->getRepository(self::ENTITY);
     }
 
-    public function find($id): ?Customer
+    public function find($customer): ?Customer
     {
         $this->entityManager->find(self::ENTITY, $id->toString());
     }
@@ -38,13 +39,13 @@ class CustomerRepository implements CustomerRepositoryInterface
         return $this->objectRepository->findOneBy(['email' => $email]);
     }
 
-    public function save(Customer $customer): void
+    public function save($customer): void
     {
         $this->entityManager->persist($customer);
         $this->entityManager->flush();
     }
 
-    public function remove(Customer $customer): void
+    public function remove($customer): void
     {
         $this->entityManager->remove($customer);
         $this->entityManager->flush();

@@ -3,7 +3,7 @@
 namespace App\Interfaces;
 
 
-interface ClosingPeriodRepositoryInterface
+interface BasicRepositoryInterface
 {
     public function findAll();
 }

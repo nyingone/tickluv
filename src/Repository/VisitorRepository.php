@@ -3,48 +3,49 @@
 namespace App\Repository;
 
 use App\Entity\Visitor;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Interfaces\VisitorRepositoryInterface;
 
-/**
- * @method Visitor|null find($id, $lockMode = null, $lockVersion = null)
- * @method Visitor|null findOneBy(array $criteria, array $orderBy = null)
- * @method Visitor[]    findAll()
- * @method Visitor[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class VisitorRepository extends ServiceEntityRepository
+
+
+class VisitorRepository implements VisitorRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private const ENTITY = Visitor::class;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+    /**
+     * 
+     * @var ObjectRepository
+     */
+    private $objectRepository;
+
+
+    public function __construct(EntityManagerInterface $entityManager) 
     {
-        parent::__construct($registry, Visitor::class);
+        $this->entityManager = $entityManager;  
+        $this->objectRepository = $this->entityManager->getRepository(self::ENTITY);
     }
 
-    // /**
-    //  * @return Visitor[] Returns an array of Visitor objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('v.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Visitor
+
+    public function find($visitor): ?Visitor
     {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $this->entityManager->find(self::ENTITY, $id->toString());
     }
-    */
+
+
+    public function save($visitor): void
+    {
+        $this->entityManager->persist($visitor);
+        // $this->entityManager->flush();
+    }
+
+    public function remove($visitor): void
+    {
+        $this->entityManager->remove($visitor);
+    }
 }

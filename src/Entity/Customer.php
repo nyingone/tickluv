@@ -136,4 +136,11 @@ class Customer
 
         return $this;
     }
+
+    public function addBookingOrderCount(): self
+    {
+        $this->bookingOrderCount ++;
+
+        return $this;
+    }
 }

@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class BookingOrderAuxiliary
 {
     private $bookingOrderRepository;
+    private $bookingOrder;
+    protected $visitorAuxiliary;
     
     protected $paramService;
     protected $scheduleService;
@@ -25,22 +27,42 @@ class BookingOrderAuxiliary
 
     private $bookingOrderAmount = 0;
 
-    public function __construct(SessionInterface $session, BookingOrderRepositoryInterface $bookingOrderRepository, ClosingPeriodService $closingPeriodService)
+    public function __construct(SessionInterface $session, BookingOrderRepositoryInterface $bookingOrderRepository, ClosingPeriodService $closingPeriodService, VisitorAuxiliary $visitorAuxiliary)
     {
         $this->bookingOrderRepository = $bookingOrderRepository;
+        $this->visitorAuxiliary = $visitorAuxiliary;
         $this->closingPeriodService = $closingPeriodService;
-        $this->session = $session;
         $this->findDefault(); 
 
     }
 
-    public function headControl($bookingOrder = null)
+
+    public function inzBookingOrder($customer, $bookingOrder = null): object
+    {   
+        if ($bookingOrder == null)
+        {
+            $this->bookingOrder= new BookingOrder();  
+            $visitor = $this->visitorAuxiliary->inzVisitor($this->bookingOrder);  
+            $this->bookingOrder->addVisitor($visitor);
+        } else {
+            $this->bookingOrder = $bookingOrder;         
+        }
+
+        $this->bookingOrder->setCustomer($customer);
+
+        if  ($bookingOrder !== null) : 
+            $this->headControl();
+        endif;
+    
+        return $this->bookingOrder;         
+    }
+
+    public function headControl()
     {
         $error = [];
-        $error[] = $this->expectedDateCtl($bookingOrder->getExpectedDate());
-     //   dd($bookingOrder->getExpectedDate(),$error, $this->closedPeriods);
-        $error[] = $this->partTimeCodeCtl($bookingOrder->getPartTimeCode());
-        $error[] = $this->visitorCountCtl($bookingOrder->getVisitorCount());
+        $error[] = $this->expectedDateCtl($this->bookingOrder->getExpectedDate());
+        $error[] = $this->partTimeCodeCtl($this->bookingOrder->getPartTimeCode());
+        $error[] = $this->visitorCountCtl($this->bookingOrder->getVisitorCount());
         
         return $error;
     }
@@ -113,7 +135,12 @@ class BookingOrderAuxiliary
 
     }
    
+    public function findGlobalVisitorCount(BookingOrder $bookingOrder): array
+    {
 
+        return $this->bookingOrderRepository->findDaysEntriesFromTo($bookingOrder->getExpectedDate(), $bookingOrder->getExpectedDate());
+
+    }
 
 
 }

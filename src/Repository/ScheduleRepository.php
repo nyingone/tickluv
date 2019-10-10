@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Schedule;
-use App\Interfaces\ScheduleRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Interfaces\ScheduleRepositoryInterface;
 
 /**
  * @method Schedule|null find($id, $lockMode = null, $lockVersion = null)

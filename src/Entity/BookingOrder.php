@@ -2,23 +2,22 @@
 
 namespace App\Entity;
 
+use App\Validator\Constraints as CustomAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Validator\Constraints as CustomAssert;
+
 //  * @ORM\Entity(repositoryClass="App\Repository\BookingOrderRepository")
 
 /**
  * @ORM\Entity
+ * @CustomAssert\BookingCountIsAvailable
  */
 class BookingOrder
 {
-    /**
-    * @Assert\NotBlank()
-    * @Assert\Positive
-    */
-    public $visitorCount = 0;
+
+   
 
     /**
      * @ORM\Id()
@@ -26,6 +25,12 @@ class BookingOrder
      * @ORM\Column(type="integer")
      */
     private $id;
+
+     /**
+    * @Assert\NotBlank()
+    * @Assert\Positive
+    */
+    public $visitorCount = 1;
 
     /**
      * @ORM\Column(type="integer")
@@ -43,13 +48,13 @@ class BookingOrder
      * @ORM\Column(type="date")
      * @Assert\Date
      * @var string A "Y-m-d" formatted value
-     * @CustomAssert\IsOpenForBooking
+     * @CustomAssert\BookingDateIsOpen
      */
     private $expectedDate;
 
     /**
      * @ORM\Column(type="smallint")
-     * @CustomAssert\IsValidPartTimeCode
+     * @CustomAssert\PartTimeCodeIsValid
      */
     private $partTimeCode;
 
@@ -105,12 +110,12 @@ class BookingOrder
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Visitor", mappedBy="bookingOrder", orphanRemoval=true, cascade={"persist"})
      */
-    private $visitors;
+    private $visitors = 1;
 
 
     public function __construct()
     {
-        $this->orderDate         = new \Datetime();
+        $this->orderDate = new \Datetime();
         $this->visitors = new ArrayCollection();
     }
 
@@ -118,6 +123,8 @@ class BookingOrder
     {
         return $this->id;
     }
+
+    
 
     public function getOrderNumber(): ?int
     {

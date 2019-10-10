@@ -54,21 +54,20 @@ class CustomerAuxiliary
      * @param [object] $customer
      * @return object
      */
-    public function setCustomer($customer = null ) : object
+    public function inzCustomer($customer = null ) : object
     {
        
         if ($customer == null)
-        { 
-            $customer = new Customer();  
-            $this->customer = $customer;
+        {   
+            $this->customer = new Customer();
             
-            $this->addBookingOrder() ; 
+            $this->inzBookingOrder() ; 
 
         } else{
             $this->customer = $customer;
         }
 
-        $this->sessionSet('cutomer', $customer);
+        $this->sessionSet('customer', $this->customer);
        
         return $this->customer;
     }
@@ -76,21 +75,14 @@ class CustomerAuxiliary
     /**
      * Undocumented function
      *
-     * @param Customer $customer
-     * @return Customer $customer
+     * @param 
+     * @return 
      */
     
-    public function addBookingOrder($bookingOrder = null)
+    public function inzBookingOrder($bookingOrder  = null)
     {
-        if ($bookingOrder == null)
-        { 
-            $bookingOrder = new BookingOrder();  
-          
-        }
-
-        $this->bookingOrderCount ++;
-        
-        $this->customer->setBookingOrderCount($this->bookingOrderCount) ; 
+       
+        $bookingOrder = $this->bookingOrderAuxiliary->inzBookingOrder($this->customer);  
         $this->customer->addBookingOrder($bookingOrder);
     }
 
