@@ -64,19 +64,23 @@ final class BookingOrderRepository implements BookingOrderRepositoryInterface
      */
     public function findDaysEntriesFromTo($start, $end): array
     {   
-        $conn = $this->getEntityManager()->getConnection();
+        $fromDate =  $start->format('Y-m-d');
+        $toDate  =  $end->format('Y-m-d');
+        $conn = $this->entityManager->getConnection();
 
         $sql = '
-            SELECT p.expectedDate, p.count as p.visitorCount FROM BookingOrder p
-            WHERE p.expectedDate >= :start
-            AND p.expectedDate <= :end
-            AND p.validatedAt not null
-            ORDER BY p.expectedDate ASC
+            SELECT p.expected_date, count(q.id) FROM booking_order p, visitor q 
+            WHERE p.id = q.booking_order_id
+            AND p.expected_date >= :from_date
+            AND p.expected_date <= :to_date
+            AND p.validated_at <> null
+            GROUP BY p.expected_date
+            ORDER BY p.expected_date ASC
             ';
         $stmt = $conn->prepare($sql);
         $stmt->execute([
-            'start' => $start,
-            'end' => $end
+            'from_date' => $fromDate,
+            'to_date' => $toDate
         ]);
 
         // returns an array of arrays (i.e. a raw data set)

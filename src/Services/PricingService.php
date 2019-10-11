@@ -27,7 +27,7 @@ class PricingService
  * @param [int] $age
  * @return [mixed] $cost
  */
-    public function getVisitorTarif($date = null, $partTimeCode, $discounted, $age) 
+    public function findVisitorTarif($partTimeCode, $discounted, $age) 
     {
 
         $pricings = $this->pricingRepository->findLastPricing($this->today, $partTimeCode, $discounted, $age);

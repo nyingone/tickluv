@@ -38,7 +38,6 @@ class PartTimeCodeIsValidValidator extends ConstraintValidator
             throw new UnexpectedValueException($value,'type');
         }
         
-        dd('hello', $value, $this->paramList);
         if(!in_array($value, $this->partTimeCodes)):
             $this->context->buildViolation($constraint->message)
             ->setParameter('{{ this->paramList }}', $value)

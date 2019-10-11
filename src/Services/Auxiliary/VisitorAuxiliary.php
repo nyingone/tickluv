@@ -22,29 +22,43 @@ class VisitorAuxiliary
     }
 
 
-    public function inzVisitor($bookingOrder, $visitor = null): object
+    public function inzVisitor(): object
     {
-        if ($visitor == null)
-        {
-             $this->visitor = new Visitor;
-        } else{
-            $this->visitor = $visitor;
-          
-        }
+        $visitor = new Visitor;
+        $visitor->setCreatedAt($this->getBookingOrder()->getStartDate());
+        return $visitor;
 
-        $this->visitor->setBookingOrder($bookingOrder);
-
-        if ($visitor !== null):
-            $this->visitorControl;
-        endif;
-       
-        return $this->visitor;
     }
 
-
-    public function visitorControl()
+    public function refreshVisitor($visitor): object
     {
-        $error = [];
+        
+        $cost = $this->pricingService->getVisitorTarif($visitor->getPartTimeCode(), $visitor->getDiscounted(),$visitor->getAge()) ;
+        $visitor->setCost($cost);
+                
+    
+        $visitor->setCost($this->pricingService->findVisitorTarif(
+            $visitor->getBookingOrder()->getStartDate(),
+            $visitor->getBookingOrder()->getPartTimeCode(), 
+            $visitor->getDiscounted(), 
+            $visitor->getAge())) ;
+
+        $this->visitorRepository->save($visitor);
+        
+        return $visitor;
     }
 
+    public function removeVisitor($visitor): void
+    {
+        $this->visitorRepository->remove($visitor);
+    }
+
+   
+
+    public function actVisitorControl($visitor)
+    {
+        return $this->validator->validate($visitor);
+    }
+
+    
 }

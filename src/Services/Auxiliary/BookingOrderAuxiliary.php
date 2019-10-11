@@ -7,18 +7,22 @@ use App\Services\ParamService;
 use App\Services\ScheduleService;
 use App\Services\ClosingPeriodService;
 use App\Interfaces\BookingOrderRepositoryInterface;
+use Symfony\Component\Asset\Context\NullContext;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BookingOrderAuxiliary
 {
     private $bookingOrderRepository;
     private $bookingOrder;
     protected $visitorAuxiliary;
+
+    protected $bookingRef;
+    protected $bookingOrderStartDate;
     
+    protected $session;
     protected $paramService;
     protected $scheduleService;
-    protected $closingPeriodService;
 
     private $closedPeriods = [];
     private $bookingStart ;
@@ -27,113 +31,79 @@ class BookingOrderAuxiliary
 
     private $bookingOrderAmount = 0;
 
-    public function __construct(SessionInterface $session, BookingOrderRepositoryInterface $bookingOrderRepository, ClosingPeriodService $closingPeriodService, VisitorAuxiliary $visitorAuxiliary)
+    public function __construct(SessionInterface $session, BookingOrderRepositoryInterface $bookingOrderRepository, VisitorAuxiliary $visitorAuxiliary, ValidatorInterface $validator)
     {
         $this->bookingOrderRepository = $bookingOrderRepository;
+        $this->session = $session;
+        $this->validator = $validator;
         $this->visitorAuxiliary = $visitorAuxiliary;
-        $this->closingPeriodService = $closingPeriodService;
-        $this->findDefault(); 
-
+        $this->bookingOrderStartDate = new \DateTime('now');
     }
 
-
-    public function inzBookingOrder($customer, $bookingOrder = null): object
-    {   
-        if ($bookingOrder == null)
-        {
-            $this->bookingOrder= new BookingOrder();  
-            $visitor = $this->visitorAuxiliary->inzVisitor($this->bookingOrder);  
-            $this->bookingOrder->addVisitor($visitor);
-        } else {
-            $this->bookingOrder = $bookingOrder;         
-        }
-
-        $this->bookingOrder->setCustomer($customer);
-
-        if  ($bookingOrder !== null) : 
-            $this->headControl();
-        endif;
-    
+    public function inzBookingOrder(): object
+    {    
+        $this->bookingOrder= new BookingOrder();         
+        $this->bookingOrder->setOrderDate( $this->bookingOrderStartDate);
+  
         return $this->bookingOrder;         
     }
 
-    public function headControl()
+
+    public function refreshBookingOrder($bookingOrder)
     {
-        $error = [];
-        $error[] = $this->expectedDateCtl($this->bookingOrder->getExpectedDate());
-        $error[] = $this->partTimeCodeCtl($this->bookingOrder->getPartTimeCode());
-        $error[] = $this->visitorCountCtl($this->bookingOrder->getVisitorCount());
-        
-        return $error;
-    }
+        if ($this->bookingRef == null) 
+        {
+            $this->bookingRef = $this->session->get('_csrf/customer');
+        }
+
+        $this->bookingOrder->setBookingRef($this->bookingRef);
+
+        $visitors = $bookingOrder->getVisitors();
+
+        if ($visitors == null)
+        {
+            $visitor = $this->visitorAuxiliary->inzVisitor();  
+            $bookingOrder->addVisitor($visitor);
+                
+        } else {
+            foreach($visitors as $visitor){
     
-    public function expectedDateCtl($expectedDate = null)
-    {
-       
-       
+                $this->visitorAuxiliary->refreshVisitor($visitor);
+           
+                $this->addError($this->visitorAuxiliary->actVisitorControl($visitor));                
+            }
+        }
+
+        $this->bookingOrderRepository->save($bookingOrder);
+        return $bookingOrder;              
     }
 
-    public function partTimeCodeCtl($partTimeCode = null)
+    
+    public function removeBookingOrder($bookingOrder): void
     {
-        if ($partTimeCode == null):
-            return (['danger', 'Choose a fullDay or part Time visit !']);
-        endif;
+        $this->bookingOrderRepository->remove($bookingOrder);
     }
 
-    public function visitorCountCtl($visitorCount = null)
+    public function actBookingOrderControl($bookingOrder)
     {
-        if ($visitorCount == null):
-            return (['danger', 'Choose a fullDay or part Time visit !']);
-        endif;
-    }
-
-    public function findDefault()
-    {    
-
-         // GET MAX RESERVED SEATS per DAY on AVAILABLE BOOKING PERIOD
-        
-
-        // SET AVAILABLE SEATS per DAY
+        $this->addError($this->validator->validate($bookingOrder));   
+        return $this->error_list;
     }
 
     public function findOrders()
     {
-        $bookingOrders = $this->bookingOrderRepository->findAll();
-
+      return  count($bookingOrders = $this->bookingOrderRepository->findAll());
     }
 
-    public function updateBookingOrder(BookingOrder $bookingOrder): void
+
+    function addError($errors)
     {
-        $this->bookingOrderRepository->save($bookingOrder);
-    }
-
-    public function load(): void 
-    {
-       
-       // Default value
-      
-        // BOOKING DELAY ==> LAST BOOKING DATE
-        /* $params = $this->getDoctrine()
-        ->getRepository(Param::class)
-        ->findOneBy(['refCode'  => "maxBookingOrderDly" ], ['id' => 'DESC']); */
-
-              // $end = new \DateTime(+ $param->getNumber() month);
-        /* $interval = new \DateInterval("P". $param->getNumber() ."M");
-        $end->add($interval);
-
-        if($param->getDayNum() === "XX"){
-            $last = new \DateTime($end->format('Y-m-t'));
+        if ($errors !== "") {
+        $this->error_list[] = $errors;
         }
-        */
-        
-        
-        // IMPERATIVE END DAY OF BOOKING 
-        /* $params = $this->getDoctrine()
-            ->getRepository(Param::class)
-            ->findBy(['ref_code' => "maxBookingDate" ]); */
-
-
     }
+
+   
    
     public function findGlobalVisitorCount(BookingOrder $bookingOrder): array
     {

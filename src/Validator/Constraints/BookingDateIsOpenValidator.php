@@ -91,6 +91,7 @@ class BookingDateIsOpenValidator extends ConstraintValidator
                 ->setParameter('{{ string }}', $strValue)
                 ->addViolation();  
             else:
+                dd($this->todayVisitingHours);
                 if ($this->datComparator->isEqual($value) && $this->todayVisitingHours == null ): 
                     $this->context->buildViolation($constraint->msgBookingClosedToday)
                     ->setParameter('{{ string }}', $strValue)

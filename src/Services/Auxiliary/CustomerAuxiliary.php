@@ -16,9 +16,9 @@ class CustomerAuxiliary
     private $bookingOrderCount = 0;
     private $totalAmount = 0;
     
+    protected $session;
     protected $customer;
-    protected $bookingRef;
-    protected $bookingOrderStartDate;
+    
     protected $bookingOrders;
 
     protected $validator;
@@ -79,86 +79,27 @@ class CustomerAuxiliary
      * @return 
      */
     
-    public function inzBookingOrder($bookingOrder  = null)
+    public function inzBookingOrder()
     {
-       
-        $bookingOrder = $this->bookingOrderAuxiliary->inzBookingOrder($this->customer);  
-        $this->customer->addBookingOrder($bookingOrder);
-    }
-
-    public function addBookingOrderAmount($amount = 0)
-    {
-        $this->totalAmount += $amount;
-    }
-
-    public function subBookingOrderAmount($amount = 0)
-    {
-        $this->totalAmount -= $amount;
-    }
-
-    public function getTotalAmount() : float
-    {
-        return $this->totalAmount;
-    }
-
-    public function preControlData($data) 
-    {
-        $this->customer = $data;
-        $this->bookingOrders = $this->customer->getBookingOrders();
-        foreach($this->bookingOrders as $bookingOrder)
-        {
-            ($this->validator->validate($bookingOrder));
-        }
-       
-        // dd($data);
+        $this->bookingOrder = $this->bookingOrderAuxiliary->inzBookingOrder($this->customer);  
+        $this->customer->addBookingOrder($this->bookingOrder);
     }
  
     /**
      * @Param  
      * @return []
      */
-    public function refreshCustomer($form) : array
+    public function refreshCustomer($customer) : array
     {
-      //  $this->entityManager = getDoctrine()->getManager(); 
-       $this->customer = $form->getData();
-      
-        if ($this->bookingRef == null) {
-         $this->bookingRef = $this->session->get('_csrf/customer');
-         $this->bookingOrderStartDate = new \DateTime('now');
-        }
+        $this->errorList = [];
         $this->bookingOrders = $this->customer->getBookingOrders();
     
         foreach ($this->bookingOrders as $bookingOrder) {
-        
-            
-            $bookingOrder->setBookingRef($this->bookingRef);
-            $bookingOrder->setOrderDate($this->bookingOrderStartDate);
-            $visitors = $bookingOrder->getVisitors();
-
-            foreach($visitors as $visitor){
-            
-                $visitor->setCreatedAt($this->bookingOrderStartDate);
-                $cost = $this->pricingService->getVisitorTarif($this->bookingOrderStartDate, $visitor->getPartTimeCode(), $visitor->getDiscounted(),$visitor->getAge()) ;
-                $visitor->setCost($cost);
-                
-
-                $this->addError($this->validator->validate($visitor));
-               
-                // dd($visitor, $this->entityManager);
-                $this->entityManager->persist($visitor);
-                
-                $bookingOrder->addVisitor($visitor);
-            }
-
-            $this->addError($this->validator->validate($bookingOrder));
-
-            // $this->entityManager->persist($bookingOrder);
-            $this->customer->addBookingOrder($bookingOrder);
+            $this->bookingOrder =  $this->bookingOrderAuxiliary->refreshBookingOrder($bookingOrder);
+            $this->addError($this->bookingOrderAuxiliary->actBookingOrderControl($this->bookingOrder));
         }
-
+    
         $this->addError($this->validator->validate($this->customer));
-  
-
         
         $this->sessionSet();
         return $this->error_list;
@@ -170,7 +111,7 @@ class CustomerAuxiliary
     {
         if ($errors !== "") {
         $this->error_list[] = $errors;
-    }
+        }
     }
 
 

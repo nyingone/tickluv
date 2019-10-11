@@ -34,7 +34,7 @@ class VisitorRepository implements VisitorRepositoryInterface
 
     public function find($visitor): ?Visitor
     {
-        $this->entityManager->find(self::ENTITY, $id->toString());
+        $this->entityManager->find(self::ENTITY, $id);
     }
 
 

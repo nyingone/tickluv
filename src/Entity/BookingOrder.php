@@ -12,12 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @CustomAssert\BookingCountIsAvailable
+ * @CustomAssert\BookingDisponibility
  */
 class BookingOrder
 {
-
-   
 
     /**
      * @ORM\Id()
@@ -29,8 +27,9 @@ class BookingOrder
      /**
     * @Assert\NotBlank()
     * @Assert\Positive
+    * Column(type="integer")
     */
-    public $visitorCount = 1;
+    public $wishes = 1;
 
     /**
      * @ORM\Column(type="integer")
@@ -40,7 +39,6 @@ class BookingOrder
     /**
      * @ORM\Column(type="datetime")
      * @Assert\DateTime()
- 
      */
     private $orderDate;
 
@@ -54,7 +52,6 @@ class BookingOrder
 
     /**
      * @ORM\Column(type="smallint")
-     * @CustomAssert\PartTimeCodeIsValid
      */
     private $partTimeCode;
 
@@ -110,7 +107,7 @@ class BookingOrder
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Visitor", mappedBy="bookingOrder", orphanRemoval=true, cascade={"persist"})
      */
-    private $visitors = 1;
+    private $visitors;
 
 
     public function __construct()
@@ -314,14 +311,14 @@ class BookingOrder
         return $this;
     }
 
-    public function getVisitorCount(): int
+    public function getWishes(): int
     {
-        return $this->visitorCount;
+        return $this->wishes;
     }
 
-    public function setVisitorCount(int $visitorCount): self
+    public function setWishes(int $wishes): self
     {
-        $this->visitorCount = $visitorCount;
+        $this->wishes = $wishes;
 
         return $this;
     }

@@ -3,26 +3,27 @@
 namespace App\Form;
 
 use App\Entity\BookingOrder;
+use App\Services\ParamService;
 use App\Form\Type\PartTimeCodeType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Validator\Constraints\BookingDateIsOpen;
-use App\Validator\Constraints\BookingCountIsAvailable;
+use Symfony\Component\Form\FormBuilderInterface;
 use App\Validator\Constraints\PartTimeCodeIsValid;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
+use App\Validator\Constraints\BookingWishIsAcceptable;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 
 class BookingOrderType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
- 
-    
+
+
+    public function buildForm(FormBuilderInterface $builder, array $options)    
     {
         $builder
             ->add('expectedDate', DateType::class, [
@@ -43,14 +44,14 @@ class BookingOrderType extends AbstractType
             ->add('partTimeCode', PartTimeCodeType::class, [
                 'attr' => ['class' => 'form-control',  'required' => false,],
                 'constraints' => [
-                    new NotBlank
+                    new NotBlank(),
                 ]
             ])
-            ->add('visitorCount', NumberType::class, [
-                'attr' => ['class' => 'form-control', 'type' => 'number', 'step' => "8"],
+            ->add('wishes', IntegerType::class, [
+                'attr' => [ 'type' => 'number', 'step' => 1, 'mapped' => false],
                 'constraints' => [
                     new Positive(),
-                    new BookingCountIsAvailable(),
+                    new BookingWishIsAcceptable()
                 ]
             ])
             -> add('visitors', CollectionType::class, [
@@ -61,11 +62,6 @@ class BookingOrderType extends AbstractType
                 'allow_delete' => true,
             ]);
     }
-    
-
-        
-
-        
         
         /*
         $builder->add('visitors', CollectionType::class, [

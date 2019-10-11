@@ -51,10 +51,12 @@ class ScheduleService
     public function findTodayVisitingHours():array
     {
       $current_time = date("H:i:s");
+     // dd($current_time);
 
       foreach ($this->allPartTimeVisitingHours as $schedule)
       {
-       
+        $lastEntryTime = date("H:i:s", time($schedule->getLastEntryTime()));
+         // dd($current_time,$schedule->getLastEntryTime(),  $lastEntryTime);
           if ($current_time < $schedule->getLastEntryTime()):
             $this->todayVisitingHours[] = $schedule;
           endif;

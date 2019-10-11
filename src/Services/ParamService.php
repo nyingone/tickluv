@@ -9,7 +9,8 @@ use DateTime;
 class ParamService
 {
     private $paramRepository;
-    private $partTimeCodes = [0,1,2];
+    private $partTimeCodes = [];
+    private $partTimeArray = [];
     private $maxVisitors = [];
     private $imperativeEndOfBooking ;
     private $endOfBooking ;
@@ -47,20 +48,26 @@ class ParamService
                     } else{
                         if($param->getRefCode() == "PartTimeCodes")
                         {
-                            $this->partTimeCodes =  $param->getList();
-                        } else{
-                            if($param->getRefCode() == "MaxBookingVisitors")
+                            $list = $param->getList();
+                            array_push($this->partTimeCodes, $list);
+                        } else {
+                            if($param->getRefCode() == "PartTimeCode")
                             {
-                                $this->maxBookingVisitors =  $param->getNumber();
+                                $this->partTimeArray[$param->getLabel() ] =  $param->getNumber();
+                            } else {
+                                if($param->getRefCode() == "MaxBookingVisitors")
+                                {
+                                    $this->maxBookingVisitors =  $param->getNumber();
+                                } 
+                            
                             }
+                        
                         }
                     }
                 }
             }
         
         }
-
-     //  dd($this->params);
 
     }
    
@@ -79,9 +86,19 @@ class ParamService
      *
      * @return string
      */
-    public function findPartTimeCodes():string
+    public function findPartTimeCodes():array
     {
         return $this->partTimeCodes;
+    }
+
+       /**
+     * Undocumented function
+     *
+     * @return array
+     */
+    public function findPartTimeArray():array
+    {
+        return $this->partTimeArray;
     }
 
     /**
