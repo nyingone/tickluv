@@ -40,6 +40,22 @@ class BookingOrderAuxiliary
         $this->bookingOrderStartDate = new \DateTime('now');
     }
 
+
+    public function sessionSet()
+    {
+        if (is_array($this->error_list) && !empty($this->error_list) )
+        {
+            $error_list0 = $this->session->get('customer_error');
+            if ( !is_array($error_list0) || empty($error_list0) ):
+                $error_list = $this->error_list;
+            else:
+                $error_list = array_merge($error_list0 , $this->error_list);
+            endif;
+
+            $this->session->set('booking_error', $error_list);
+        }
+    }
+
     public function inzBookingOrder(): object
     {    
         $this->bookingOrder= new BookingOrder();         
@@ -51,31 +67,31 @@ class BookingOrderAuxiliary
 
     public function refreshBookingOrder($bookingOrder)
     {
+        $this->error_list = [];
         if ($this->bookingRef == null) 
         {
             $this->bookingRef = $this->session->get('_csrf/customer');
         }
 
-        $this->bookingOrder->setBookingRef($this->bookingRef);
+        $bookingOrder->setBookingRef($this->bookingRef);
 
         $visitors = $bookingOrder->getVisitors();
 
         if ($visitors == null)
         {
-            $visitor = $this->visitorAuxiliary->inzVisitor();  
-            $bookingOrder->addVisitor($visitor);
-                
+            $visitor = $this->visitorAuxiliary->inzVisitor();     
+            $bookingOrder->addVisitor($visitor);     
         } else {
             foreach($visitors as $visitor){
-    
-                $this->visitorAuxiliary->refreshVisitor($visitor);
-           
-                $this->addError($this->visitorAuxiliary->actVisitorControl($visitor));                
+                $this->visitor = $this->visitorAuxiliary->refreshVisitor($visitor);     
             }
         }
 
         $this->bookingOrderRepository->save($bookingOrder);
-        return $bookingOrder;              
+        $this->actBookingOrderControl($bookingOrder);
+        $this->session->set('bookingOrder_error', $this->error_list);
+
+        return $bookingOrder;      
     }
 
     
@@ -86,21 +102,18 @@ class BookingOrderAuxiliary
 
     public function actBookingOrderControl($bookingOrder)
     {
-        $this->addError($this->validator->validate($bookingOrder));   
-        return $this->error_list;
+        $errors = $this->validator->validate($bookingOrder);
+        if (count($errors) > 0) 
+        {
+             $this->error_list[] = (string) $errors;
+        }
+
+        
     }
 
     public function findOrders()
     {
       return  count($bookingOrders = $this->bookingOrderRepository->findAll());
-    }
-
-
-    function addError($errors)
-    {
-        if ($errors !== "") {
-        $this->error_list[] = $errors;
-        }
     }
 
    

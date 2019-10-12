@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 class BookingDisponibilityValidator extends ConstraintValidator
 {
     private $paramService;
-    private $bookingOrderService;
+    private $bookingOrderAuxiliary;
     private $maxVisitors ;
     private $availableVisitorNumber;
     private $datComparator ;
@@ -34,14 +34,30 @@ class BookingDisponibilityValidator extends ConstraintValidator
     public function validate($bookingOrder, Constraint $constraint)
     {    
 
-        $this->availableVisitorNumber = $this->findAvailableVisitorNumber($bookingOrder);  
-
+        $this->findAvailableVisitorNumber($bookingOrder);  
+        
         if( ($this->availableVisitorNumber < $bookingOrder->getWishes()) || 
-        ($this->availableVisitorNumber < count($bookingOrder->getVisitors)) ):
+        ($this->availableVisitorNumber < count($bookingOrder->getVisitors())) ):
             $this->context->buildViolation($constraint->msgBookingExedesCapacity)
-            ->setParameter('{{ string }}'," ")
+            ->setParameter('{{ available }}',$this->availableVisitorNumber)
             ->addViolation(); 
-        endif;                 
+        endif;        
+        
+        $visitors = $bookingOrder->getVisitors();
+        if(is_countable($visitors) ):
+            $x = count($visitors);
+        else:
+            $x = 0;
+        endif;
+
+        if ( $x = 0)
+        {
+            $this->context->buildViolation($constraint->msgBookingAddVisitors)
+            ->setParameter('{{ enter your list of visitor }}',  "")
+            ->addViolation(); 
+        }
+        
+        
     }
 
     public function findAvailableVisitorNumber($bookingOrder)

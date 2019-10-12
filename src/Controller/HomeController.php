@@ -22,9 +22,10 @@ class HomeController extends AbstractController
 
 
    // public function __Construct( CustomerAuxiliary $customerAuxiliary)
-    public function __Construct(CustomerAuxiliary $customerAuxiliary, ParamService $paramService)
+    public function __Construct(SessionInterface $session, CustomerAuxiliary $customerAuxiliary, ParamService $paramService)
     {  
         $this->paramService = $paramService;
+        $this->session = $session;
         $this->customerAuxiliary = $customerAuxiliary;
         $this->customer = $customerAuxiliary->inzCustomer();
     }
@@ -45,7 +46,13 @@ class HomeController extends AbstractController
 
             $this->customer  = $form->getData();
             $this->customerAuxiliary->refreshCustomer($this->customer);
-            return $this->redirectToRoute('confirmation');
+           
+            dd($this->session->get('booking_error'));
+            if($this->session->get('customer_error') || $this->session->get('booking_error') || $this->session->get('visitor_error')):
+                dd($this->session->get('customer_error'));
+            else:
+                return $this->redirectToRoute('confirmation');
+            endif;
         }
         
         return $this->render('home/index.html.twig', [ 'controller_name' => 'HomeController',

@@ -19,11 +19,14 @@ class PricingRepository implements PricingRepositoryInterface
     private $entityManager;
 
     private $pricingrepository;
+    private  $conn;
 
 
     public function __construct(EntityManagerInterface $entityManager)
     {
-      //  $this->entityManager = $entityManager;
+        $this->entityManager = $entityManager;
+        $this->conn = $this->entityManager->getConnection();
+
        // $this->pricingrepository = $this->entityManager->getRepository(Pricing::class);
 
     }
@@ -31,6 +34,24 @@ class PricingRepository implements PricingRepositoryInterface
     public function findAll()
     {
 
+    }
+
+
+    public function findLastTarifDate($date)
+    {
+      $dateRef =  $date->format('Y-m-d');
+   
+      $sql = '
+          SELECT max(term_date) FROM pricing p
+          WHERE p.term_date <= :date_ref
+          ORDER BY p.term_date DESC
+          ';
+      $stmt = $this->conn->prepare($sql);
+      $stmt->execute([
+          'date_ref' => $dateRef
+          ]);
+
+          return $stmt->fetchAll();
     }
    
     /**
@@ -42,28 +63,26 @@ class PricingRepository implements PricingRepositoryInterface
      */
     public function findLastPricing($date, $partTimeCode, $discounted, $yearsOld): array
           {
-        $conn = $this->getEntityManager()->getConnection();
-
+        $dateRef =  $date->format('Y-m-d');
+     
         $sql = '
             SELECT * FROM pricing p
-            WHERE p.termDate >= :date
-            AND p.discounted = :discounted
-            AND p.partTimeCode = :partTimeCode
-            AND p.ageMin <= :yearsOld                     
-            AND p.ageMax > :yearsOld
-            ORDER BY p.termDate DESC
+            WHERE p.term_date = :date_ref
+            AND (p.discounted = :discounted)
+            AND p.part_time_code in ( :part_time_code , null)
+            AND p.age_min <= :years_old                     
+            AND p.age_max > :years_old
+            ORDER BY p.part_time_code DESC
             ';
-      /*  $stmt = $conn->prepare($sql);
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute([
-            'date' => $date,
+            'date_ref' => $dateRef,
             'discounted' => $discounted,
-            'partTimeCode' => $partTimeCode,
-            'yearsOld'  => $yearsOld
-            ]); */
+            'part_time_code' => $partTimeCode,
+            'years_old'  => $yearsOld
+            ]);
 
-            return ['xx'];
-    // returns an array of arrays (i.e. a raw data set)
-     //   return $stmt->fetchAll();
+            return $stmt->fetchAll();
     }
        
     // /**

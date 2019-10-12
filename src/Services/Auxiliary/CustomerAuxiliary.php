@@ -18,8 +18,7 @@ class CustomerAuxiliary
     
     protected $session;
     protected $customer;
-    
-    protected $bookingOrders;
+    protected $bookingOrders = [];
 
     protected $validator;
     protected $error_list =[];
@@ -45,7 +44,11 @@ class CustomerAuxiliary
             $content = $this->customer;
         }
         $this->session->set($name, $content);
-    
+
+       if (is_array($this->error_list) && !empty($this->error_list) )
+       {
+        $this->session->set('customer_error', $this->error_list);
+       }
     }
 
     /**
@@ -81,63 +84,38 @@ class CustomerAuxiliary
     
     public function inzBookingOrder()
     {
-        $this->bookingOrder = $this->bookingOrderAuxiliary->inzBookingOrder($this->customer);  
-        $this->customer->addBookingOrder($this->bookingOrder);
+        $bookingOrder = $this->bookingOrderAuxiliary->inzBookingOrder($this->customer);  
+        $this->customer->addBookingOrder($bookingOrder);
     }
  
     /**
      * @Param  
-     * @return []
+     * @return 
      */
-    public function refreshCustomer($customer) : array
+    public function refreshCustomer($customer) : void
     {
         $this->errorList = [];
-        $this->bookingOrders = $this->customer->getBookingOrders();
-    
-        foreach ($this->bookingOrders as $bookingOrder) {
-            $this->bookingOrder =  $this->bookingOrderAuxiliary->refreshBookingOrder($bookingOrder);
-            $this->addError($this->bookingOrderAuxiliary->actBookingOrderControl($this->bookingOrder));
+        $bookingOrders = $customer->getBookingOrders(); 
+
+        foreach ($bookingOrders as $bookingOrder) {
+          $this->bookingOrderAuxiliary->refreshBookingOrder($bookingOrder);     
         }
-    
-        $this->addError($this->validator->validate($this->customer));
-        
+        $this->addError();   
         $this->sessionSet();
-        return $this->error_list;
     }
    
     
 
-    function addError($errors)
+    function addError()
     {
-        if ($errors !== "") {
-        $this->error_list[] = $errors;
+        $errors = $this->validator->validate($this->customer);
+        if (count($errors) > 0) 
+        {
+             $this->error_list[] = (string) $errors;
         }
+
     }
 
-
-    public function loadCustomerByEmail($email): Customer
-    {
-        $customer = $this->userRepository->findOneByEmail($email);
-
-        if ($customer !== null) {
-            return $customer;
-        }
-        throw new Exception(
-            sprintf('Email "%s" does not exist.', $email)
-        );
-    }
-    
-    
-    public function validateCustomer(Customer $customer): Customer
-    {
-        if (!$customer instanceof User) {
-            throw new Exception(
-                sprintf('Instances of "%s" are not supported.', \get_class($customer))
-            );
-        }
-        $id = $customer->getId();
-        return $this->find($customer);
-    }
 
 
 }

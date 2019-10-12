@@ -22,10 +22,26 @@ class VisitorAuxiliary
     }
 
 
+    public function sessionSet()
+    {
+        if (is_array($this->error_list) && !empty($this->error_list) )
+        {
+            $error_list0 = $this->session->get('customer_error');
+            if ( !is_array($error_list0) || empty($error_list0) ):
+                $error_list = $this->error_list;
+            else:
+                $error_list = array_merge($error_list0 , $this->error_list);
+            endif;
+
+            $this->session->set('booking_error', $error_list);
+        }
+    }
+
     public function inzVisitor(): object
     {
         $visitor = new Visitor;
         $visitor->setCreatedAt($this->getBookingOrder()->getStartDate());
+        $this->addError($this->visitorAuxiliary->actVisitorControl($visitor));
         return $visitor;
 
     }
@@ -44,6 +60,7 @@ class VisitorAuxiliary
             $visitor->getAge())) ;
 
         $this->visitorRepository->save($visitor);
+        $this->addError($this->visitorAuxiliary->actVisitorControl($visitor));
         
         return $visitor;
     }
