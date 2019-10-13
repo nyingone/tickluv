@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Entity\Pricing;
 use App\Interfaces\PricingRepositoryInterface;
 
 class PricingService
@@ -30,7 +31,7 @@ class PricingService
         $tarifDates = $this->pricingRepository->findLastTarifDate($date);
         $tarifDate  = $tarifDates[0];
         foreach($tarifDate as $item => $date):
-            $this->tarifDate = $date;
+            $this->tarifDate = new \datetime($date);
         endforeach;
     }
 /**
@@ -46,21 +47,22 @@ class PricingService
     {
         $this->findLastTarifDate($date);
 
+    //    fetch pricing partTimeCode is null or = 
         
         $pricings = $this->pricingRepository->findLastPricing($this->tarifDate, $partTimeCode, $discounted, $age);
-        
-        dd($pricings);
+     
         foreach ($pricings as $pricing)
-        {
-            if ($age >= $pricing->getAgeMin() && $age < $pricing->getAgeMax())
+        { 
+            if( ($age >= $pricing->getAgeMin() && $age < $pricing->getAgeMax()) &&
+                ($pricing->getPartTimeCode() == null || $partTimeCode = $pricing->getPartTimeCode()) )
             {
-                $this->cost = $pricing->getCost();
-            }
-               
+                $this->cost = $pricing->getPrice();
+                if( ($pricing->getPartTimeCode() == null) && ($partTimeCode !==0) ):               
+                    $this->cost = $this->cost / $partTimeCode;
+                endif;
+            }  
         }
         return $this->cost;
     }
-
-
 
 }

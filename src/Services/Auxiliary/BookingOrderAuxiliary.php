@@ -24,12 +24,7 @@ class BookingOrderAuxiliary
     protected $paramService;
     protected $scheduleService;
 
-    private $closedPeriods = [];
-    private $bookingStart ;
-    private $bookingEnd;
 
-
-    private $bookingOrderAmount = 0;
 
     public function __construct(SessionInterface $session, BookingOrderRepositoryInterface $bookingOrderRepository, VisitorAuxiliary $visitorAuxiliary, ValidatorInterface $validator)
     {
@@ -74,33 +69,46 @@ class BookingOrderAuxiliary
         }
 
         $bookingOrder->setBookingRef($this->bookingRef);
-
+        $amount = 0;
+       
         $visitors = $bookingOrder->getVisitors();
-
-        if ($visitors == null)
+     
+        if (count($visitors) == 0)
         {
-            $visitor = $this->visitorAuxiliary->inzVisitor();     
-            $bookingOrder->addVisitor($visitor);     
+            $this->addVisitor($bookingOrder);
+      
         } else {
             foreach($visitors as $visitor){
                 $this->visitor = $this->visitorAuxiliary->refreshVisitor($visitor);     
+                $amount += $visitor->getCost();
             }
+            if (count($visitors) < $bookingOrder->getWishes()):
+                $this->addVisitor($bookingOrder);
+            endif;
+
         }
 
-        $this->bookingOrderRepository->save($bookingOrder);
-        $this->actBookingOrderControl($bookingOrder);
-        $this->session->set('bookingOrder_error', $this->error_list);
+        $bookingOrder->setTotalAmount($amount);
 
+        $this->bookingOrderRepository->save($bookingOrder);
+        $this->bookingOrderControl($bookingOrder);
+        $this->session->set('bookingOrder_error', $this->error_list);
+    
         return $bookingOrder;      
     }
 
-    
+    public function addVisitor($bookingOrder)
+    {
+        $visitor = $this->visitorAuxiliary->inzVisitor();   
+        $bookingOrder->addVisitor($visitor);     
+    }
+
     public function removeBookingOrder($bookingOrder): void
     {
         $this->bookingOrderRepository->remove($bookingOrder);
     }
 
-    public function actBookingOrderControl($bookingOrder)
+    public function bookingOrderControl($bookingOrder)
     {
         $errors = $this->validator->validate($bookingOrder);
         if (count($errors) > 0) 

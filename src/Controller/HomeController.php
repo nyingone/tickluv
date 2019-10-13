@@ -47,9 +47,9 @@ class HomeController extends AbstractController
             $this->customer  = $form->getData();
             $this->customerAuxiliary->refreshCustomer($this->customer);
            
-            dd($this->session->get('booking_error'));
-            if($this->session->get('customer_error') || $this->session->get('booking_error') || $this->session->get('visitor_error')):
-                dd($this->session->get('customer_error'));
+          
+            if($this->session->get('customer_error') || $this->session->get('bookingOrder_error') || $this->session->get('visitor_error')):
+            //  dd($this->session->get('bookingOrder_error'), $this->session->get('visitor_error') );
             else:
                 return $this->redirectToRoute('confirmation');
             endif;

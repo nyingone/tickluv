@@ -240,7 +240,7 @@ class Visitor
 
     /**
      * @param date $birthdate
-     * @return integer $age
+     * @return integer $ageYearsOld
      */
     public function setAgeYearsOld()
     

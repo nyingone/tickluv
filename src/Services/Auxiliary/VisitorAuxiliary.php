@@ -6,8 +6,9 @@ namespace App\Services\Auxiliary;
 
 use App\Entity\Visitor;
 use App\Services\PricingService;
-use App\Services\Param\ParamAuxiliary;
 use App\Interfaces\VisitorRepositoryInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class VisitorAuxiliary 
 {
@@ -15,10 +16,12 @@ class VisitorAuxiliary
     private $pricingService;
       
 
-    public function __construct(VisitorRepositoryInterface $visitorRepository, PricingService $pricingService)
+    public function __construct(VisitorRepositoryInterface $visitorRepository, PricingService $pricingService, ValidatorInterface $validator, SessionInterface $session)
     {
        $this->visitorRepository = $visitorRepository;
        $this->pricingService = $pricingService;
+       $this->validator = $validator;
+       $this->session = $session;
     }
 
 
@@ -39,28 +42,26 @@ class VisitorAuxiliary
 
     public function inzVisitor(): object
     {
-        $visitor = new Visitor;
-        $visitor->setCreatedAt($this->getBookingOrder()->getStartDate());
-        $this->addError($this->visitorAuxiliary->actVisitorControl($visitor));
-        return $visitor;
+        $this->visitor = new Visitor;
+    
+        $this->visitorControl($this->visitor);      
+        return $this->visitor;
 
     }
 
     public function refreshVisitor($visitor): object
     {
         
-        $cost = $this->pricingService->getVisitorTarif($visitor->getPartTimeCode(), $visitor->getDiscounted(),$visitor->getAge()) ;
-        $visitor->setCost($cost);
-                
     
+        $visitor->setCreatedAt($visitor->getBookingOrder()->getOrderDate());          
+   //  dd($visitor->getBookingOrder()->getOrderDate());
         $visitor->setCost($this->pricingService->findVisitorTarif(
-            $visitor->getBookingOrder()->getStartDate(),
+            $visitor->getBookingOrder()->getOrderDate(),
             $visitor->getBookingOrder()->getPartTimeCode(), 
             $visitor->getDiscounted(), 
-            $visitor->getAge())) ;
-
-        $this->visitorRepository->save($visitor);
-        $this->addError($this->visitorAuxiliary->actVisitorControl($visitor));
+            $visitor->getAgeYearsOld())) ;
+            
+        $this->visitorControl($visitor);
         
         return $visitor;
     }
@@ -72,9 +73,18 @@ class VisitorAuxiliary
 
    
 
-    public function actVisitorControl($visitor)
+    public function visitorControl($visitor)
     {
-        return $this->validator->validate($visitor);
+        $this->visitorRepository->save($visitor);
+
+        $errors = $this->validator->validate($visitor);
+        if (count($errors) > 0) 
+        {
+             $this->error_list[] = (string) $errors;
+             $this->session->set('visitor_error', $this->error_list);
+        }
+
+       
     }
 
     
