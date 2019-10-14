@@ -7,7 +7,6 @@ use App\Entity\Visitor;
 use Symfony\Component\Validator\Constraint;
 use App\Services\Auxiliary\VisitorAuxiliary;
 use App\Validator\Constraints\VisitorIsRegistered;
-use Symfony\Component\Validator\Constraints\DateValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
@@ -15,17 +14,17 @@ class VisitorIsRegisteredValidator
 {
 
     private $visitorAuxiliary;
-    private $dateValidator;
 
-    public function __construct(VisitorAuxiliary $visitorAuxiliary, DateValidator $dateValidator)
+    public function __construct(VisitorAuxiliary $visitorAuxiliary, DateValidator $dateValidator,  CountryValidator $countryValidator)
     {
         $this->visitorAuxiliary = $visitorAuxiliary;
-        $this->dateValidator = $dateValidator;
     }
 
 
     public function validate(Visitor $visitor, Constraint $constraint)
     {
+       
+
         if (!$constraint instanceof VisitorIsRegistered)
         {
             throw new UnexpectedTypeException($constraint,  VisitorIsRegistered::class);
@@ -36,19 +35,19 @@ class VisitorIsRegisteredValidator
             throw new UnexpectedValueException($visitor, 'objet');
         }
     
-   
-        if(!is_string($visitor->getFirstName()) || !is_string($visitor->getLastName())):
-            $this->context->buildViolation($constraint->msgLastOrFirstnameIsMissing)
-            ->setParameter('{{ available }}',$this->availableVisitorNumber)
+        $this->controlKnownVisitor($visitor); 
+
+        if(count($this->knownVisitors) > 1):
+            $this->context->buildViolation($constraint->msgVisitorIsAlreadyRegistered)
+            ->setParameter('{{ available }}', $this->availableVisitorNumber)
             ->addViolation();
         endif;
 
-        $value = $visitor->getBirthdate();
-        $constraintX = new Constraint;
-        $this->dateValidator->validate($value, $constraintX);
-
-    
+    }
 
 
+    public function controlKnownVisitor($visitor)
+    {
+        $this->knownVisitors = $this->visitorAuxiliary->controlKnownVisitor($visitor);  
     }
 }

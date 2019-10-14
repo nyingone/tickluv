@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraint;
 use App\Services\Auxiliary\BookingOrderAuxiliary;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use App\Validator\Constraints\ BookingDisponibility;
+use App\Validator\Constraints\BookingDisponibility;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
@@ -34,6 +34,16 @@ class BookingDisponibilityValidator extends ConstraintValidator
     public function validate($bookingOrder, Constraint $constraint)
     {    
 
+        if (!$constraint instanceof BookingDisponibility)
+        {
+            throw new UnexpectedTypeException($constraint,  BookingDisponibility::class);
+
+        }
+        if (!is_object( $bookingOrder)) {
+            // throw this exception if your validator cannot handle the passed type so that it can be marked as invalid
+            throw new UnexpectedValueException($bookingOrder, 'objet');
+        }
+   
         $this->findAvailableVisitorNumber($bookingOrder);  
         
         if( ($this->availableVisitorNumber < $bookingOrder->getWishes()) || 
@@ -50,11 +60,18 @@ class BookingDisponibilityValidator extends ConstraintValidator
             $x = 0;
         endif;
 
-        if ( $x = 0)
+        if ( $x == 0)
         {
             $this->context->buildViolation($constraint->msgBookingAddVisitors)
             ->setParameter('{{ enter your list of visitor }}',  "")
             ->addViolation(); 
+        } else{
+            if ( $x == 1 && $bookingOrder->getTotalAmount() == 0):
+                $this->context->buildViolation($constraint->msgBookingAddPayingVisitors)
+            ->setParameter('{{ add a paid entry to free visit for underage kid  }}',  "")
+            ->addViolation();
+            endif;
+
         }
         
         

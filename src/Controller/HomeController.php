@@ -15,14 +15,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
-
-    private $bookingDispo = [];
     private $customer;
-    private $closingPeriodService;
 
 
    // public function __Construct( CustomerAuxiliary $customerAuxiliary)
-    public function __Construct(SessionInterface $session, CustomerAuxiliary $customerAuxiliary, ParamService $paramService)
+    public function __Construct(SessionInterface $session, CustomerAuxiliary $customerAuxiliary)
     {  
         $this->paramService = $paramService;
         $this->session = $session;
@@ -45,11 +42,13 @@ class HomeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()){    
 
             $this->customer  = $form->getData();
+            $this->session->remove('customer_error');
+            $this->session->remove('bookingOrder_error');
+            $this->session->remove('visitor_error');
             $this->customerAuxiliary->refreshCustomer($this->customer);
            
-          
             if($this->session->get('customer_error') || $this->session->get('bookingOrder_error') || $this->session->get('visitor_error')):
-            //  dd($this->session->get('bookingOrder_error'), $this->session->get('visitor_error') );
+            dd($this->session->get('bookingOrder_error'), $this->session->get('visitor_error') );
             else:
                 return $this->redirectToRoute('confirmation');
             endif;

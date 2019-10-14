@@ -37,6 +37,15 @@ class VisitorRepository implements VisitorRepositoryInterface
         $this->entityManager->find(self::ENTITY, $id);
     }
 
+    public function findBy($visitor)
+    {
+        return $this->objectRepository->findby([
+            'firstName' => $visitor->getFirstName(),
+            'lastName' => $visitor->getLastName(),
+            'createdAt' => $visitor->getCreatedAt()
+        ]);
+    }
+
 
     public function save($visitor): void
     {

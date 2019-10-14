@@ -3,11 +3,7 @@
 namespace App\Services\Auxiliary;
 
 use App\Entity\BookingOrder;
-use App\Services\ParamService;
-use App\Services\ScheduleService;
-use App\Services\ClosingPeriodService;
 use App\Interfaces\BookingOrderRepositoryInterface;
-use Symfony\Component\Asset\Context\NullContext;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -28,8 +24,8 @@ class BookingOrderAuxiliary
 
     public function __construct(SessionInterface $session, BookingOrderRepositoryInterface $bookingOrderRepository, VisitorAuxiliary $visitorAuxiliary, ValidatorInterface $validator)
     {
-        $this->bookingOrderRepository = $bookingOrderRepository;
         $this->session = $session;
+        $this->bookingOrderRepository = $bookingOrderRepository;
         $this->validator = $validator;
         $this->visitorAuxiliary = $visitorAuxiliary;
         $this->bookingOrderStartDate = new \DateTime('now');
@@ -72,16 +68,18 @@ class BookingOrderAuxiliary
         $amount = 0;
        
         $visitors = $bookingOrder->getVisitors();
-     
+        
         if (count($visitors) == 0)
         {
             $this->addVisitor($bookingOrder);
       
         } else {
+           
             foreach($visitors as $visitor){
                 $this->visitor = $this->visitorAuxiliary->refreshVisitor($visitor);     
-                $amount += $visitor->getCost();
+                $amount += $this->visitor->getCost();
             }
+           
             if (count($visitors) < $bookingOrder->getWishes()):
                 $this->addVisitor($bookingOrder);
             endif;
@@ -114,17 +112,13 @@ class BookingOrderAuxiliary
         if (count($errors) > 0) 
         {
              $this->error_list[] = (string) $errors;
-        }
-
-        
+        }     
     }
 
     public function findOrders()
     {
       return  count($bookingOrders = $this->bookingOrderRepository->findAll());
     }
-
-   
    
     public function findGlobalVisitorCount(BookingOrder $bookingOrder): array
     {

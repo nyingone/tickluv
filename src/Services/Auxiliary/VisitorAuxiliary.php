@@ -2,8 +2,6 @@
 
 namespace App\Services\Auxiliary;
 
-// use App\Services\AbstractAuxiliary;
-
 use App\Entity\Visitor;
 use App\Services\PricingService;
 use App\Interfaces\VisitorRepositoryInterface;
@@ -43,6 +41,7 @@ class VisitorAuxiliary
     public function inzVisitor(): object
     {
         $this->visitor = new Visitor;
+        $this->visitor->setCountry('XX');
     
         $this->visitorControl($this->visitor);      
         return $this->visitor;
@@ -51,10 +50,8 @@ class VisitorAuxiliary
 
     public function refreshVisitor($visitor): object
     {
-        
-    
+         
         $visitor->setCreatedAt($visitor->getBookingOrder()->getOrderDate());          
-   //  dd($visitor->getBookingOrder()->getOrderDate());
         $visitor->setCost($this->pricingService->findVisitorTarif(
             $visitor->getBookingOrder()->getOrderDate(),
             $visitor->getBookingOrder()->getPartTimeCode(), 
@@ -83,8 +80,13 @@ class VisitorAuxiliary
              $this->error_list[] = (string) $errors;
              $this->session->set('visitor_error', $this->error_list);
         }
-
        
+    }
+
+
+    public function controlKnownVisitor($visitor)
+    {
+        return ($this->visitorRepository->findGroupBy($visitor));
     }
 
     

@@ -17,11 +17,15 @@ class Visitor
     * @ORM\Column(type="integer")
     */
     private $id;
-
+    /**
+    * @Assert\NotBlank(message="Booking is impossible, no tarif found.")
+    * Column(type="string", length=2)
+    */
+    public $tarifCode = 1;
     /**
     * @ORM\Column(type="string", length=255)
-    *  @Assert\NotBlank(message="Enter first Name please.")
-    *  @Assert\Length(
+    * @Assert\NotBlank(message="Enter first Name please.")
+    * @Assert\Length(
     *      min = 2,
     *      max = 50,
     *      minMessage = "Your firstname must be at least {{ limit }} characters long",

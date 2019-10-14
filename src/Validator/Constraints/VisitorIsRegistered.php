@@ -9,9 +9,8 @@ use Symfony\Component\Validator\Constraint;
  */
 class VisitorIsRegistered extends Constraint
 {
-    public $msgLastOrFirstnameIsMissing = 'Visitor_ Firstname or lastname is required and missing';
-    public $msgDateOfBirthIsMissing = 'Visitor_BirthDate is required and missing';
-    public $msgCountryIsMissing = 'Visitor_country is required and missing';
+    public $msgVisitorIsAlreadyRegistered = 'Visitor_ is already registered for this day and booking';
+   
 
 
 
