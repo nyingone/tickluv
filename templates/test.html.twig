@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}  we are on test case {% endblock %}
+
+{% block body %}
+ 
+    {{ form_start(form) }}
+         <input type="submit" class="btn btn-primary" value= "{% trans %} Go ahead {% endtrans %} " /> 
+    {{ form_end(form) }}
+
+
+{% endblock %}
+
+
+{%  block javascript %}
+
+    <script>
+        var form = document.querySelector('div#xxx');
+        var formCount = form.children.lenght;
+        console.info(form);
+
+        var button = document.querySelector('button#add');
+
+        button.addEventListener('click)', function () {
+            add()
+        });
+
+        if (formCount === 0) {
+            add();
+        }
+
+        function add() {
+            var prototype = form.getAttributes('data-prototype'):
+            var template = prototype.replace(/__name__label__/, 'New file')
+            .replace(/__name__, formCount);
+
+            console.info(template);
+
+            form.innerHTML += template;
+            formCount++;
+        }
+    </script>
+{% endblock%}

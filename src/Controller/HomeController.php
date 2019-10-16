@@ -8,10 +8,12 @@ use App\Services\ParamService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Services\Auxiliary\CustomerAuxiliary;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Twig\Environment;
 
 class HomeController extends AbstractController
 {
@@ -21,7 +23,7 @@ class HomeController extends AbstractController
    // public function __Construct( CustomerAuxiliary $customerAuxiliary)
     public function __Construct(SessionInterface $session, CustomerAuxiliary $customerAuxiliary)
     {  
-        $this->paramService = $paramService;
+     //    $this->paramService = $paramService;
         $this->session = $session;
         $this->customerAuxiliary = $customerAuxiliary;
         $this->customer = $customerAuxiliary->inzCustomer();
@@ -42,13 +44,11 @@ class HomeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()){    
 
             $this->customer  = $form->getData();
-            $this->session->remove('customer_error');
-            $this->session->remove('bookingOrder_error');
-            $this->session->remove('visitor_error');
             $this->customerAuxiliary->refreshCustomer($this->customer);
+            // dd($this->customer);
            
             if($this->session->get('customer_error') || $this->session->get('bookingOrder_error') || $this->session->get('visitor_error')):
-            dd($this->session->get('bookingOrder_error'), $this->session->get('visitor_error') );
+               //  dd($this->session->get('bookingOrder_error'), $this->session->get('visitor_error'), $this->customer );
             else:
                 return $this->redirectToRoute('confirmation');
             endif;
@@ -66,4 +66,10 @@ class HomeController extends AbstractController
        return $txt;
    }
 
+
+   public function __invoke(Environment $environment)
+   {
+        return new Response($environment->render('base.html.twig')
+        );
+   }
 }

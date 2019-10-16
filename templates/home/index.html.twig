@@ -11,46 +11,49 @@
 
 </script>
 <div class = "row">
-<div class= "col-md-12"> 
-    <h1>{% trans %} Hello {% endtrans %} {{ controller_name }}! ✅</h1>
- 
-    <div class = "row" id= "cart" >
-        
-        <div class= "col-md-6"> 
-        {{ form_start(form) }}
+    <div class= "col-md-12"> 
+    
+        <div class = "row"  >
+            
+            <div class= "col-md-6" id= "cart"> 
+            {{ form_start(form) }}
 
-        {{ form_errors(form) }}
+            {# { form_errors(form) } #}
 
-        {# Render the BookingOrder fields #}
-            <h3>{% trans %} Your orders {% endtrans %} </h3>   
+            {# Render the BookingOrder fields #}
+                <h3>{% trans %} Your orders {% endtrans %} </h3>   
                 <aside >
                     <p id = "JS_message"> <p>
                 </aside>
-                <ul class="bookingOrders" data-prototype="{{ form_widget(form.bookingOrders.vars.prototype)|e('html_attr') }}">
+                <ul  class="bookingOrders" data-prototype="{{ form_widget(form.bookingOrders.vars.prototype)|e('html_attr') }}">
                     {# iterate over each existing BookingOrder and render fields to enter #}
                     {% for bookingOrder in form.bookingOrders %}
                     
                         <li>
                             <span class="required_N0"> {{ form_row(bookingOrder.expectedDate)}} </span>
+                            {{ form_errors(bookingOrder.expectedDate) }}
                             <span class="required_N0"> {{ form_row(bookingOrder.partTimeCode)}} </span>
+                                {{ form_errors(bookingOrder.partTimeCode) }}
                             <span class="required_N0"> {{ form_row(bookingOrder.wishes)}} </span>
+                                {{ form_errors(bookingOrder.wishes) }}
                     
-                                <ul class="visitors" data-prototype="{{ form_widget(bookingOrder.visitors.vars.prototype)|e('html_attr') }}"> 
-                                    <h3>{% trans %} Your guests {% endtrans %} </h3>  
-                                    {# iterate over each existing Visitor and render fields to enter #}   
-                                    {# % form_theme form.bookingOrder.visitor 'foundation_5_layout.html.twig' % #}
-                                    {% for visitor in bookingOrder.visitors %}                                             
-                                        <li>
+                            <ul class="visitors" data-prototype="{{ form_widget(bookingOrder.visitors.vars.prototype)|e('html_attr') }}"> 
+                                <h3>{% trans %} Your guests {% endtrans %} </h3>  
+                                {# iterate over each existing Visitor and render fields to enter #}   
+                                {# % form_theme form.bookingOrder.visitor 'foundation_5_layout.html.twig' % #}
+                                {{ dump(bookingOrder.visitors) }}
+                                {% for visitor in bookingOrder.visitors %}                                             
+                                    <li>
                                         {% include('inc/_newVisitor.html.twig') %}
-                                       <p> xxxxxx </p>
-                                        </li>
-                                    {% endfor %} 
-                                </ul>
+                                    <p> xxxxxx </p>
+                                    </li>
+                                {% endfor %} 
+                            </ul>
                             <a href = "#" id="add_visitor" class = "btn btn-succes">Add a visitor</a>
                         
                         </li>
                     {% endfor %}  
-                    <a href = "#" id="add_bookingOrder" class = "btn btn-default" >Add an other booking day</a>
+                 <a href = "#" id="add_bookingOrder" class = "btn btn-default" >Add an other booking day</a>
                 </ul>    
             
 
@@ -71,6 +74,7 @@
  
 </div>
 </div>
-<script> </script>
+<script> 
+</script>
 {% endblock %}
 

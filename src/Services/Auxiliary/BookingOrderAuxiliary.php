@@ -68,21 +68,20 @@ class BookingOrderAuxiliary
         $amount = 0;
        
         $visitors = $bookingOrder->getVisitors();
-        
+    
         if (count($visitors) == 0)
         {
-            $this->addVisitor($bookingOrder);
-      
+            for ($i = 1;  $i <= $bookingOrder->getWishes(); ++$i)
+            {
+                 $this->addVisitor($bookingOrder);
+            }
+                       
         } else {
            
             foreach($visitors as $visitor){
                 $this->visitor = $this->visitorAuxiliary->refreshVisitor($visitor);     
                 $amount += $this->visitor->getCost();
             }
-           
-            if (count($visitors) < $bookingOrder->getWishes()):
-                $this->addVisitor($bookingOrder);
-            endif;
 
         }
 

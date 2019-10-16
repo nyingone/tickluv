@@ -75,10 +75,11 @@ class VisitorAuxiliary
         $this->visitorRepository->save($visitor);
 
         $errors = $this->validator->validate($visitor);
+     
         if (count($errors) > 0) 
         {
-             $this->error_list[] = (string) $errors;
-             $this->session->set('visitor_error', $this->error_list);
+            $this->error_list[] = (string) $errors;
+            $this->session->set('visitor_error', $this->error_list);
         }
        
     }
