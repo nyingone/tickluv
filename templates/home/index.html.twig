@@ -29,7 +29,7 @@
                     {# iterate over each existing BookingOrder and render fields to enter #}
                     {% for bookingOrder in form.bookingOrders %}
                     
-                        <li>
+                        <li class="bookingOrder">
                             <span class="required_N0"> {{ form_row(bookingOrder.expectedDate)}} </span>
                             {{ form_errors(bookingOrder.expectedDate) }}
                             <span class="required_N0"> {{ form_row(bookingOrder.partTimeCode)}} </span>
@@ -43,14 +43,12 @@
                                 {# % form_theme form.bookingOrder.visitor 'foundation_5_layout.html.twig' % #}
                                 {{ dump(bookingOrder.visitors) }}
                                 {% for visitor in bookingOrder.visitors %}                                             
-                                    <li>
+                                    <li class = "visitor">
                                         {% include('inc/_newVisitor.html.twig') %}
                                     <p> xxxxxx </p>
                                     </li>
                                 {% endfor %} 
-                            </ul>
-                            <a href = "#" id="add_visitor" class = "btn btn-succes">Add a visitor</a>
-                        
+                            </ul>                        
                         </li>
                     {% endfor %}  
                 </ul>    
