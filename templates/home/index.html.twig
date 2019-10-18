@@ -41,7 +41,6 @@
                                 <h3>{% trans %} Your guests {% endtrans %} </h3>  
                                 {# iterate over each existing Visitor and render fields to enter #}   
                                 {# % form_theme form.bookingOrder.visitor 'foundation_5_layout.html.twig' % #}
-                                {{ dump(bookingOrder.visitors) }}
                                 {% for visitor in bookingOrder.visitors %}                                             
                                     <li class = "visitor">
                                         {% include('inc/_newVisitor.html.twig') %}
