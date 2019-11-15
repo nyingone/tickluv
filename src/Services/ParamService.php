@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
-use App\Interfaces\ParamRepositoryInterface;
-use App\Entity\Param;
+
 use DateTime;
+use App\Entity\Param;
+use App\Repository\Interfaces\ParamRepositoryInterface;
 
 class ParamService
 {

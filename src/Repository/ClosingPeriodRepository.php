@@ -4,7 +4,8 @@ namespace App\Repository;
 
 use App\Entity\ClosingPeriod;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Interfaces\ClosingPeriodRepositoryInterface;
+use App\Repository\Interfaces\ClosingPeriodRepositoryInterface;
+
 
 final class ClosingPeriodRepository implements ClosingPeriodRepositoryInterface
 {

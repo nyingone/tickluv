@@ -4,9 +4,9 @@ namespace App\Services\Auxiliary;
 
 use App\Entity\Visitor;
 use App\Services\PricingService;
-use App\Interfaces\VisitorRepositoryInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use App\Repository\Interfaces\VisitorRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class VisitorAuxiliary 
 {

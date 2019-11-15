@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Param;
-use App\Interfaces\ParamRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\Interfaces\ParamRepositoryInterface;
 
 
 class ParamRepository implements ParamRepositoryInterface

@@ -4,8 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Customer;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Interfaces\CustomerRepositoryInterface;
-
+use App\Repository\Interfaces\CustomerRepositoryInterface;
 
 class CustomerRepository implements CustomerRepositoryInterface
 {

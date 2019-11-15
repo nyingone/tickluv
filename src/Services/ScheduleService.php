@@ -3,8 +3,7 @@
 namespace App\Services;
 
 use App\Entity\Schedule;
-use App\Interfaces\ScheduleRepositoryInterface;
-
+use App\Repository\Interfaces\ScheduleRepositoryInterface;
 
 class ScheduleService
 {

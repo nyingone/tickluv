@@ -4,8 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Visitor;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Interfaces\VisitorRepositoryInterface;
-
+use App\Repository\Interfaces\VisitorRepositoryInterface;
 
 
 class VisitorRepository implements VisitorRepositoryInterface

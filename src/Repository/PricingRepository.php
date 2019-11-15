@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Pricing;
-use App\Interfaces\PricingRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\Interfaces\PricingRepositoryInterface;
 
 /**
  * @method Pricing|null find($id, $lockMode = null, $lockVersion = null)

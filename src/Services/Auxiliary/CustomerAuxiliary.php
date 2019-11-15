@@ -7,7 +7,7 @@ use App\Entity\Visitor;
 use App\Entity\Customer;
 use App\Entity\BookingOrder;
 use Symfony\Component\HttpFoundation\Request;
-use App\Interfaces\CustomerRepositoryInterface;
+use App\Repository\Interfaces\CustomerRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 

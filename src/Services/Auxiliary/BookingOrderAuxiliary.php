@@ -3,9 +3,10 @@
 namespace App\Services\Auxiliary;
 
 use App\Entity\BookingOrder;
-use App\Interfaces\BookingOrderRepositoryInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Repository\Interfaces\BookingOrderRepositoryInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class BookingOrderAuxiliary
 {

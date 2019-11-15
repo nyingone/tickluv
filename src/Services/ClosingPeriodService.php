@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Interfaces\ClosingPeriodRepositoryInterface;
+use App\Repository\Interfaces\ClosingPeriodRepositoryInterface;
 
 class ClosingPeriodService
 

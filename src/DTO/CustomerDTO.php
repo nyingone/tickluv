@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Domain\DTO;
+namespace App\DTO;
 
-use Symfony\Component\Validator\Constraints as Assert;
+
+use App\DTO\Interfaces\DefaultDTOInterface;
+use Doctrine\Common\Collections\Collection;
 use App\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * 
  */
-class NewCustomerDTO
+class CustomerDTO implements DefaultDTOInterface
 {
     public $bookingOrderCount = 0;
-
-    
+  
     /**
      * Column(type="string", length=255)
      */
@@ -35,7 +36,6 @@ class NewCustomerDTO
     public $email;
 
     /**
-     * OneToMany(targetEntity="App\Domain\DTO\NewBookingOrderDTO", mappedBy="customer", orphanRemoval=true, cascade={"persist"})
      * @Assert\Collection(
      *     fields = { 
      *         "expectedDate" = {
@@ -49,7 +49,10 @@ class NewCustomerDTO
      *     allowMissingFields = false
      * )
      */
-    public $bookingOrders;
+    public $bookingOrderDTOs;
 
-    
+    public function __construct()
+    {
+        
+    }
 }

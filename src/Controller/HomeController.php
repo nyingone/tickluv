@@ -19,8 +19,7 @@ class HomeController extends AbstractController
 {
     private $customer;
 
-
-   // public function __Construct( CustomerAuxiliary $customerAuxiliary)
+   
     public function __Construct(SessionInterface $session, CustomerAuxiliary $customerAuxiliary)
     {  
      //    $this->paramService = $paramService;
@@ -45,7 +44,7 @@ class HomeController extends AbstractController
 
             $this->customer  = $form->getData();
             $this->customerAuxiliary->refreshCustomer($this->customer);
-            // dd($this->customer);
+    
            
             if($this->session->get('customer_error') || $this->session->get('bookingOrder_error') || $this->session->get('visitor_error')):
                //  dd($this->session->get('bookingOrder_error'), $this->session->get('visitor_error'), $this->customer );

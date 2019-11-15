@@ -3,7 +3,8 @@
 namespace App\Services;
 
 use App\Entity\Pricing;
-use App\Interfaces\PricingRepositoryInterface;
+use App\Repository\Interfaces\PricingRepositoryInterface;
+
 
 class PricingService
 {

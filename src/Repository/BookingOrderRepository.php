@@ -5,7 +5,8 @@ namespace App\Repository;
 use App\Entity\BookingOrder;
 use App\Services\ClosingPeriodService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Interfaces\BookingOrderRepositoryInterface;
+use App\Repository\Interfaces\BookingOrderRepositoryInterface;
+
 
 final class BookingOrderRepository implements BookingOrderRepositoryInterface
 {

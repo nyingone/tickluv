@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Schedule;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Interfaces\ScheduleRepositoryInterface;
+use App\Repository\Interfaces\ScheduleRepositoryInterface;
 
 /**
  * @method Schedule|null find($id, $lockMode = null, $lockVersion = null)
